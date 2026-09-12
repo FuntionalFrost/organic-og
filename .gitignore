@@ -27,5 +27,5 @@ test-results
 *.db
 
 # AI
-.GEMINI
+GEMINI.md
 /.gemini

@@ -18,7 +18,7 @@
 			offers: {
 				'@type': 'Offer',
 				price: '0',
-				priceCurrency: 'USD'
+				priceCurrency: 'EUR'
 			},
 			featureList: [
 				'5 Responsive Templates (SaaS, Minimal, Blog, E-commerce, GitHub)',

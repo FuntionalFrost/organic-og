@@ -16,23 +16,23 @@
 			id: 'starter',
 			name: 'Starter Bundle',
 			credits: '1,000',
-			price: '$9.00',
-			perImage: '$0.009 / image'
+			price: '€9.00',
+			perImage: '€0.009 / image'
 		},
 		{
 			id: 'growth',
 			name: 'Growth Bundle',
 			credits: '5,000',
-			price: '$29.00',
-			perImage: '$0.0058 / image',
+			price: '€29.00',
+			perImage: '€0.0058 / image',
 			popular: true
 		},
 		{
 			id: 'scale',
 			name: 'Scale Bundle',
 			credits: '25,000',
-			price: '$99.00',
-			perImage: '$0.0039 / image'
+			price: '€99.00',
+			perImage: '€0.0039 / image'
 		}
 	];
 

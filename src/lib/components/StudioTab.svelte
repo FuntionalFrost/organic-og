@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { FormField, Input, Textarea, Select, Badge, Icon } from 'yaxa-svelte';
-	import { Monitor, MessageSquare, ExternalLink } from '@lucide/svelte';
+	import { FormField, Input, Textarea, Select, Badge } from 'yaxa-svelte';
+	import { Monitor } from '@lucide/svelte';
 	import type { StudioState } from '$lib/types/dashboard';
 
 	interface Props {
@@ -36,18 +36,18 @@
 	let previewMode = $state<'canvas' | 'twitter' | 'discord' | 'linkedin' | 'whatsapp'>('canvas');
 
 	const previewModes = [
-		{ label: 'Raw (1200×630)', value: 'canvas', icon: Monitor },
-		{ label: 'Twitter / X', value: 'twitter', icon: 'twitter' },
-		{ label: 'Discord', value: 'discord', icon: MessageSquare },
-		{ label: 'LinkedIn', value: 'linkedin', icon: ExternalLink },
-		{ label: 'WhatsApp', value: 'whatsapp', icon: 'whatsapp' }
+		{ label: 'Raw (1200×630)', value: 'canvas', type: 'monitor' },
+		{ label: 'Twitter / X', value: 'twitter', type: 'twitter' },
+		{ label: 'Discord', value: 'discord', type: 'discord' },
+		{ label: 'LinkedIn', value: 'linkedin', type: 'linkedin' },
+		{ label: 'WhatsApp', value: 'whatsapp', type: 'whatsapp' }
 	];
 </script>
 
 <main class="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8 lg:grid-cols-12">
 	<!-- Controls Column -->
 	<div
-		class="h-fit space-y-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900 lg:col-span-5"
+		class="h-fit space-y-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-xs lg:col-span-5 dark:border-neutral-800 dark:bg-neutral-900"
 	>
 		<div class="flex items-center justify-between">
 			<h2 class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">
@@ -169,7 +169,9 @@
 				{/if}
 			</div>
 			<!-- Mode Switcher Buttons -->
-			<div class="flex items-center gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900">
+			<div
+				class="flex items-center gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900"
+			>
 				{#each previewModes as m (m.value)}
 					<button
 						type="button"
@@ -178,14 +180,29 @@
 							? 'bg-white text-neutral-900 shadow-xs dark:bg-neutral-800 dark:text-white'
 							: 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'}"
 						onclick={() =>
-							(previewMode = m.value as
-								| 'canvas'
-								| 'twitter'
-								| 'discord'
-								| 'linkedin'
-								| 'whatsapp')}
+							(previewMode = m.value as 'canvas' | 'twitter' | 'discord' | 'linkedin' | 'whatsapp')}
 					>
-						{#if m.value === 'whatsapp'}
+						{#if m.type === 'monitor'}
+							<Monitor class="h-3.5 w-3.5" />
+						{:else if m.type === 'twitter'}
+							<svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-current" aria-hidden="true">
+								<path
+									d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+								/>
+							</svg>
+						{:else if m.type === 'discord'}
+							<svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-current" aria-hidden="true">
+								<path
+									d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
+								/>
+							</svg>
+						{:else if m.type === 'linkedin'}
+							<svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-current" aria-hidden="true">
+								<path
+									d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c.97 0 1.75-.79 1.75-1.76s-.78-1.75-1.75-1.75a1.75 1.75 0 0 0-1.75 1.75c0 .97.78 1.76 1.75 1.76m1.4 9.74v-8.37H5.06v8.37h2.8z"
+								/>
+							</svg>
+						{:else if m.type === 'whatsapp'}
 							<svg
 								viewBox="0 0 24 24"
 								class="h-3.5 w-3.5 fill-current text-emerald-500"
@@ -195,8 +212,6 @@
 									d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.59.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"
 								/>
 							</svg>
-						{:else}
-							<Icon name={m.icon} size="xs" />
 						{/if}
 						<span>{m.label}</span>
 					</button>
@@ -257,7 +272,7 @@
 					class="w-full max-w-lg space-y-2 rounded-lg border-l-4 border-indigo-500 bg-[#2b2d31] p-4 text-xs shadow-2xl"
 				>
 					<div class="text-[11px] font-medium text-neutral-400">
-						{studioState.siteName || 'OG Engine Platform'}
+						{studioState.siteName || 'organic-og.netlify.app'}
 					</div>
 					<div class="cursor-pointer text-sm font-bold text-sky-400 hover:underline">
 						{studioState.title}
@@ -290,7 +305,7 @@
 							OG
 						</div>
 						<div>
-							<div class="text-xs font-semibold text-neutral-200">Dynamic OG Engine</div>
+							<div class="text-xs font-semibold text-neutral-200">Organic-OG</div>
 							<div class="text-[10px] text-neutral-500">Promoted • Just now</div>
 						</div>
 					</div>
@@ -320,7 +335,7 @@
 				>
 					<!-- Outgoing Message Bubble -->
 					<div
-						class="ml-auto w-full max-w-[340px] sm:max-w-[360px] rounded-2xl rounded-tr-xs bg-[#d9fdd3] p-1.5 text-neutral-900 shadow-md dark:bg-[#005c4b] dark:text-white"
+						class="ml-auto w-full max-w-[340px] rounded-2xl rounded-tr-xs bg-[#d9fdd3] p-1.5 text-neutral-900 shadow-md sm:max-w-[360px] dark:bg-[#005c4b] dark:text-white"
 					>
 						<!-- Link Preview Container -->
 						<div
@@ -339,7 +354,7 @@
 							</div>
 							<div class="space-y-0.5 p-2.5">
 								<div
-									class="text-[10px] font-medium uppercase tracking-wider text-emerald-700 dark:text-emerald-400"
+									class="text-[10px] font-medium tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
 								>
 									{studioState.siteName || 'ogengine.io'}
 								</div>
@@ -389,9 +404,13 @@
 		</div>
 
 		<!-- Embed Tag Code snippet -->
-		<div class="rounded-lg border border-neutral-200 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-			<span class="mb-2 block font-mono text-xs text-neutral-500 dark:text-neutral-400">Signed Embed Code</span>
-			<code class="font-mono text-xs break-all text-primary-600 dark:text-primary-400 select-all">
+		<div
+			class="rounded-lg border border-neutral-200 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900"
+		>
+			<span class="mb-2 block font-mono text-xs text-neutral-500 dark:text-neutral-400"
+				>Signed Embed Code</span
+			>
+			<code class="font-mono text-xs break-all text-primary-600 select-all dark:text-primary-400">
 				&lt;meta property="og:image" content="{baseUrl}{signedPreviewUrl}" /&gt;
 			</code>
 		</div>

@@ -1,21 +1,21 @@
 import { defineSiteConfig } from 'yaxa-svelte';
 
 export const siteConfig = defineSiteConfig({
-	name: 'OG Engine',
-	title: 'OG Engine — Instant Dynamic Social Cards & OpenGraph Images',
+	name: 'Organic-OG',
+	title: 'Organic-OG — Instant Dynamic Social Cards & OpenGraph Images',
 	description:
 		'High-performance dynamic OpenGraph image generator built with SvelteKit, Satori, and Edge Functions. 5 responsive templates, HMAC URL signing, API key management, and real-time analytics.',
-	url: 'https://ogengine.dev',
+	url: 'https://organic-og.netlify.app',
 	version: '1.2.0',
 	defaultLocale: 'en',
 	logo: '/favicon.svg',
 	author: {
-		name: 'OG Engine',
-		url: 'https://ogengine.dev',
+		name: 'Organic-OG',
+		url: 'https://organic-og.netlify.app',
 		github: 'https://github.com/FuntionalFrost'
 	},
 	company: {
-		legalName: 'OG Engine',
+		legalName: 'Organic-OG',
 		contactEmail: 'devfrost@protonmail.com'
 	},
 	legal: {
@@ -35,9 +35,9 @@ export const siteConfig = defineSiteConfig({
 		defaultMode: 'dark'
 	},
 	seo: {
-		titleTemplate: '%s · OG Engine',
+		titleTemplate: '%s · Organic-OG',
 		defaultOgImage:
-			'/api/og?template=saas&title=OG+Engine&description=Automated+Social+Cards+at+the+Edge&badge=v1.2+Live',
+			'/api/og?template=saas&title=Organic-OG&description=Automated+Social+Cards+at+the+Edge&badge=v1.2+Live',
 		twitterCard: 'summary_large_image',
 		keywords: [
 			'OpenGraph generator',

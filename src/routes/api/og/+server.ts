@@ -121,7 +121,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 		const logoDataUri = await fetchRemoteImageAsDataUri(query.logoUrl as string | undefined);
 
 		const props: TemplateProps = {
-			title: ((query.title as string) || 'Dynamic OG Engine').slice(0, 200),
+			title: ((query.title as string) || 'Organic-OG').slice(0, 200),
 			description: ((query.description as string) || '').slice(0, 400),
 			badge: ((query.badge as string) || '').slice(0, 60),
 			siteName: ((query.siteName as string) || '').slice(0, 80),

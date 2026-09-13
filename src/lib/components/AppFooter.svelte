@@ -1,26 +1,20 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { siteConfig } from '$lib/site.config';
 	import { Icon } from 'yaxa-svelte';
+	import OrganicOgLogo from '$lib/components/OrganicOgLogo.svelte';
 
 	const currentYear = new Date().getFullYear();
 	const legalLinks = siteConfig.legal?.links;
 </script>
 
-<footer class="border-t border-neutral-200 bg-white transition-colors dark:border-neutral-800 dark:bg-neutral-950">
+<footer
+	class="border-t border-neutral-200 bg-white transition-colors dark:border-neutral-800 dark:bg-neutral-950"
+>
 	<div class="mx-auto max-w-7xl px-8 py-12 md:py-16">
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-4 lg:grid-cols-5">
 			<!-- Brand Info -->
 			<div class="space-y-4 md:col-span-2 lg:col-span-2">
-				<a href="/" class="inline-flex items-center gap-2.5 font-bold tracking-tight">
-					<div
-						class="flex h-7 w-7 items-center justify-center rounded-lg border border-primary-500/40 bg-primary-500/20 text-xs font-extrabold text-primary-500 shadow-inner dark:text-primary-400"
-					>
-						OG
-					</div>
-					<span class="text-base font-bold tracking-tight text-neutral-900 dark:text-white">
-						{siteConfig.name}
-					</span>
-				</a>
+				<OrganicOgLogo size="md" />
 				<p class="max-w-sm text-sm text-neutral-600 dark:text-neutral-400">
 					{siteConfig.description}
 				</p>
@@ -32,7 +26,7 @@
 					Navigation
 				</h3>
 				<ul class="mt-4 space-y-2.5 text-sm text-neutral-600 dark:text-neutral-400">
-					{#each siteConfig.nav || [] as item}
+					{#each siteConfig.nav || [] as item (item.href)}
 						<li>
 							<a
 								href={item.href}
@@ -48,7 +42,9 @@
 			<!-- Legal Links (Rendered once cleanly in this column) -->
 			{#if legalLinks}
 				<div>
-					<h3 class="text-xs font-semibold tracking-wider text-neutral-900 uppercase dark:text-white">
+					<h3
+						class="text-xs font-semibold tracking-wider text-neutral-900 uppercase dark:text-white"
+					>
 						Legal & Compliance
 					</h3>
 					<ul class="mt-4 space-y-2.5 text-sm text-neutral-600 dark:text-neutral-400">
@@ -134,8 +130,8 @@
 		>
 			<p>© {currentYear} {siteConfig.name}. All rights reserved.</p>
 			<div class="flex items-center gap-2">
-				<span class="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-				<span class="text-[11px] font-mono text-neutral-400">All systems operational</span>
+				<span class="inline-flex h-2 w-2 animate-pulse rounded-full bg-emerald-500"></span>
+				<span class="font-mono text-[11px] text-neutral-400">All systems operational</span>
 			</div>
 		</div>
 	</div>

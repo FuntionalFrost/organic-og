@@ -28,7 +28,9 @@
 		</p>
 	</div>
 
-	<div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+	<div
+		class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900"
+	>
 		<DataTable
 			data={keysList}
 			{columns}

@@ -16,10 +16,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		badge: 'v1.0 Live',
 		description:
 			'High-performance OpenGraph image generator built with SvelteKit, Satori, and Edge Functions.',
-		siteName: 'ogengine.dev',
+		siteName: 'organic-og.netlify.app',
 		template: 'saas',
 		theme: 'brand',
-		title: 'OG Engine — Automated Social Cards at the Edge'
+		title: 'Organic-OG — Automated Social Cards at the Edge'
 	};
 
 	const secret =
@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 	// 2. Structured SEO metadata for page & JSON-LD
 	const seo = definePageSeo({
-		title: 'OG Engine — Instant OpenGraph & Social Banner Generator',
+		title: 'Organic-OG — Instant OpenGraph & Social Banner Generator',
 		description:
 			'Generate dynamic, branded OpenGraph images on edge runtimes in under 10ms with SvelteKit, Satori, and Resvg.',
 		ogImage: defaultOgUrl,

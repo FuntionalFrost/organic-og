@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Tabs, Button, Badge, Avatar, Icon, useShortcuts, useColorMode, toast } from 'yaxa-svelte';
+	import {
+		Tabs,
+		Button,
+		Badge,
+		Avatar,
+		Icon,
+		useShortcuts,
+		useColorMode,
+		toast
+	} from 'yaxa-svelte';
 	import {
 		Download,
 		Copy,
@@ -27,6 +36,7 @@
 	import AuthGatedState from '$lib/components/AuthGatedState.svelte';
 	import CreateKeyModal from '$lib/components/CreateKeyModal.svelte';
 	import BuyCreditsModal from '$lib/components/BuyCreditsModal.svelte';
+	import OrganicOgLogo from '$lib/components/OrganicOgLogo.svelte';
 
 	let { data } = $props();
 
@@ -204,20 +214,15 @@
 	});
 </script>
 
-<div class="flex min-h-screen flex-col bg-white text-neutral-900 transition-colors dark:bg-neutral-950 dark:text-neutral-100">
+<div
+	class="flex min-h-screen flex-col bg-white text-neutral-900 transition-colors dark:bg-neutral-950 dark:text-neutral-100"
+>
 	<!-- Navbar Header -->
 	<header
 		class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-8 py-3.5 backdrop-blur-md transition-colors dark:border-neutral-800 dark:bg-neutral-950/80"
 	>
 		<div class="flex items-center gap-6">
-			<div class="flex items-center gap-3">
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary-500/40 bg-primary-500/20 text-xs font-extrabold text-primary-500 shadow-inner dark:text-primary-400"
-				>
-					OG
-				</div>
-				<span class="text-lg font-bold tracking-tight text-neutral-900 dark:text-white">OG Engine Platform</span>
-			</div>
+			<OrganicOgLogo size="md" />
 			<div class="w-auto">
 				<Tabs items={tabItems} bind:value={activeTab} variant="segmented" />
 			</div>
@@ -286,7 +291,9 @@
 			</Button>
 
 			<!-- User Auth Profile Widget -->
-			<div class="flex items-center gap-2.5 border-l border-neutral-200 pl-3 dark:border-neutral-800">
+			<div
+				class="flex items-center gap-2.5 border-l border-neutral-200 pl-3 dark:border-neutral-800"
+			>
 				{#if data.user}
 					<Badge
 						color="primary"
@@ -303,7 +310,9 @@
 						{:else}
 							<Avatar alt={data.user.name || 'User'} size="xs" />
 						{/if}
-						<span class="max-w-[120px] truncate text-xs font-medium text-neutral-700 dark:text-neutral-300">
+						<span
+							class="max-w-[120px] truncate text-xs font-medium text-neutral-700 dark:text-neutral-300"
+						>
 							{data.user.name || data.user.email}
 						</span>
 					</div>

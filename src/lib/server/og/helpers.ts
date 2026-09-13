@@ -180,7 +180,7 @@ export function createWatermark() {
 				color: '#ffffff',
 				zIndex: 50
 			},
-			children: 'Created with OG Engine'
+			children: 'Created with Organic-OG'
 		}
 	};
 }

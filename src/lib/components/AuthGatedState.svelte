@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Button, Icon } from 'yaxa-svelte';
+	import { Button, Icon, type IconSource } from 'yaxa-svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		icon?: any;
+		icon?: IconSource;
 		iconColorClass?: string;
 		title: string;
 		description: string;

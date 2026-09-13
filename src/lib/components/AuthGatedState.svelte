@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		icon?: string;
+		icon?: any;
 		iconColorClass?: string;
 		title: string;
 		description: string;
@@ -13,7 +13,7 @@
 	}
 
 	let {
-		icon = 'key',
+		icon,
 		iconColorClass = 'text-primary-400',
 		title,
 		description,

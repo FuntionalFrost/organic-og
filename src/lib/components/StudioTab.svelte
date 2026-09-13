@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { FormField, Input, Textarea, Select, Badge, Icon } from 'yaxa-svelte';
+	import { Monitor, MessageSquare, ExternalLink } from '@lucide/svelte';
 	import type { StudioState } from '$lib/types/dashboard';
 
 	interface Props {
@@ -32,20 +33,21 @@
 		{ label: 'Light Clean', value: 'light' }
 	];
 
-	let previewMode = $state<'canvas' | 'twitter' | 'discord' | 'linkedin'>('canvas');
+	let previewMode = $state<'canvas' | 'twitter' | 'discord' | 'linkedin' | 'whatsapp'>('canvas');
 
 	const previewModes = [
-		{ label: 'Raw (1200×630)', value: 'canvas', icon: 'computer' },
+		{ label: 'Raw (1200×630)', value: 'canvas', icon: Monitor },
 		{ label: 'Twitter / X', value: 'twitter', icon: 'twitter' },
-		{ label: 'Discord', value: 'discord', icon: 'info' },
-		{ label: 'LinkedIn', value: 'linkedin', icon: 'external-link' }
+		{ label: 'Discord', value: 'discord', icon: MessageSquare },
+		{ label: 'LinkedIn', value: 'linkedin', icon: ExternalLink },
+		{ label: 'WhatsApp', value: 'whatsapp', icon: 'whatsapp' }
 	];
 </script>
 
 <main class="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8 lg:grid-cols-12">
 	<!-- Controls Column -->
 	<div
-		class="h-fit space-y-4 rounded-xl border border-neutral-800 bg-neutral-900 p-6 lg:col-span-5"
+		class="h-fit space-y-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900 lg:col-span-5"
 	>
 		<div class="flex items-center justify-between">
 			<h2 class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">
@@ -167,17 +169,35 @@
 				{/if}
 			</div>
 			<!-- Mode Switcher Buttons -->
-			<div class="flex items-center gap-1 rounded-lg border border-neutral-800 bg-neutral-900 p-1">
+			<div class="flex items-center gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900">
 				{#each previewModes as m (m.value)}
 					<button
 						type="button"
 						class="flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {previewMode ===
 						m.value
-							? 'bg-neutral-800 text-white shadow-xs'
-							: 'text-neutral-400 hover:text-neutral-200'}"
-						onclick={() => (previewMode = m.value as 'canvas' | 'twitter' | 'discord' | 'linkedin')}
+							? 'bg-white text-neutral-900 shadow-xs dark:bg-neutral-800 dark:text-white'
+							: 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'}"
+						onclick={() =>
+							(previewMode = m.value as
+								| 'canvas'
+								| 'twitter'
+								| 'discord'
+								| 'linkedin'
+								| 'whatsapp')}
 					>
-						<Icon name={m.icon} size="xs" />
+						{#if m.value === 'whatsapp'}
+							<svg
+								viewBox="0 0 24 24"
+								class="h-3.5 w-3.5 fill-current text-emerald-500"
+								aria-hidden="true"
+							>
+								<path
+									d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.59.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"
+								/>
+							</svg>
+						{:else}
+							<Icon name={m.icon} size="xs" />
+						{/if}
 						<span>{m.label}</span>
 					</button>
 				{/each}
@@ -186,12 +206,12 @@
 
 		<!-- Simulator Canvas Container -->
 		<div
-			class="flex w-full items-center justify-center rounded-xl border border-neutral-900 bg-neutral-950/60 py-4"
+			class="flex w-full items-center justify-center rounded-xl border border-neutral-200 bg-neutral-100/70 py-4 dark:border-neutral-900 dark:bg-neutral-950/60"
 		>
 			<!-- 1. Raw Canvas Mode -->
 			{#if previewMode === 'canvas'}
 				<div
-					class="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-2xl"
+					class="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
 				>
 					{#if signedPreviewUrl}
 						<img
@@ -292,13 +312,86 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- 5. WhatsApp Chat Link Card Mockup -->
+			{:else if previewMode === 'whatsapp'}
+				<div
+					class="w-full max-w-md overflow-hidden rounded-2xl border border-neutral-200 bg-[#efeae2] p-4 shadow-2xl dark:border-neutral-800 dark:bg-[#0b141a]"
+				>
+					<!-- Outgoing Message Bubble -->
+					<div
+						class="ml-auto w-full max-w-[340px] sm:max-w-[360px] rounded-2xl rounded-tr-xs bg-[#d9fdd3] p-1.5 text-neutral-900 shadow-md dark:bg-[#005c4b] dark:text-white"
+					>
+						<!-- Link Preview Container -->
+						<div
+							class="overflow-hidden rounded-xl border border-neutral-300/80 bg-[#f0f2f5] dark:border-[#202c33] dark:bg-[#111b21]"
+						>
+							<div
+								class="relative aspect-[1200/630] w-full overflow-hidden bg-neutral-200 dark:bg-[#202c33]"
+							>
+								{#if signedPreviewUrl}
+									<img
+										src={signedPreviewUrl}
+										alt="WhatsApp Link Preview"
+										class="h-full w-full object-cover {isRendering ? 'opacity-60' : ''}"
+									/>
+								{/if}
+							</div>
+							<div class="space-y-0.5 p-2.5">
+								<div
+									class="text-[10px] font-medium uppercase tracking-wider text-emerald-700 dark:text-emerald-400"
+								>
+									{studioState.siteName || 'ogengine.io'}
+								</div>
+								<div class="truncate text-xs font-semibold text-neutral-900 dark:text-neutral-100">
+									{studioState.title}
+								</div>
+								<div
+									class="line-clamp-2 text-[11px] leading-tight text-neutral-600 dark:text-neutral-300"
+								>
+									{studioState.description}
+								</div>
+							</div>
+						</div>
+
+						<!-- Link Message & Timestamp Bar -->
+						<div class="flex items-end justify-between px-2 pt-2 pb-1 text-xs">
+							<span
+								class="max-w-[210px] truncate text-[12px] text-emerald-800 underline dark:text-emerald-200"
+							>
+								https://{studioState.siteName || 'ogengine.io'}
+							</span>
+							<div
+								class="flex shrink-0 items-center gap-1 text-[10px] text-neutral-600 dark:text-emerald-200/70"
+							>
+								<span>12:45 PM</span>
+								<!-- WhatsApp Blue Double Checks -->
+								<svg
+									class="h-3.5 w-3.5 text-sky-500 dark:text-sky-400"
+									viewBox="0 0 16 15"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M15.01 3.316l-7.79 7.79a.75.75 0 01-1.06 0l-3.89-3.89a.75.75 0 111.06-1.06l3.36 3.36 7.26-7.26a.75.75 0 111.06 1.06z"
+										fill="currentColor"
+									/>
+									<path
+										d="M11.51 3.316l-7.79 7.79a.75.75 0 01-1.06 0l-1.89-1.89a.75.75 0 111.06-1.06l1.36 1.36 7.26-7.26a.75.75 0 111.06 1.06z"
+										fill="currentColor"
+									/>
+								</svg>
+							</div>
+						</div>
+					</div>
+				</div>
 			{/if}
 		</div>
 
 		<!-- Embed Tag Code snippet -->
-		<div class="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-			<span class="mb-2 block font-mono text-xs text-neutral-400">Signed Embed Code</span>
-			<code class="font-mono text-xs break-all text-primary-400 select-all">
+		<div class="rounded-lg border border-neutral-200 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+			<span class="mb-2 block font-mono text-xs text-neutral-500 dark:text-neutral-400">Signed Embed Code</span>
+			<code class="font-mono text-xs break-all text-primary-600 dark:text-primary-400 select-all">
 				&lt;meta property="og:image" content="{baseUrl}{signedPreviewUrl}" /&gt;
 			</code>
 		</div>

@@ -1,8 +1,22 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Tabs, Button, Badge, Avatar, Icon, useShortcuts, toast } from 'yaxa-svelte';
-	import { Download, Copy, RefreshCw, Plus, LogOut, Coins } from '@lucide/svelte';
+	import { Tabs, Button, Badge, Avatar, Icon, useShortcuts, useColorMode, toast } from 'yaxa-svelte';
+	import {
+		Download,
+		Copy,
+		RefreshCw,
+		Plus,
+		LogOut,
+		Coins,
+		Sliders,
+		Key,
+		BookOpen,
+		BarChart3,
+		Sparkles,
+		Sun,
+		Moon
+	} from '@lucide/svelte';
 	import { authClient } from '$lib/utils/authClient';
 	import type { StudioState, ApiKeyItem } from '$lib/types/dashboard';
 	import { getActiveParams } from '$lib/utils/snippets';
@@ -16,12 +30,13 @@
 
 	let { data } = $props();
 
+	const colorMode = useColorMode();
 	let activeTab = $state('studio');
 	const tabItems = [
-		{ label: 'Studio Preview', value: 'studio', icon: 'computer' },
-		{ label: 'API Keys & Credits', value: 'keys', icon: 'key' },
-		{ label: 'Developer Docs', value: 'docs', icon: 'info' },
-		{ label: 'Analytics & Logs', value: 'analytics', icon: 'sparkles' }
+		{ label: 'Studio Preview', value: 'studio', icon: Sliders },
+		{ label: 'API Keys & Credits', value: 'keys', icon: Key },
+		{ label: 'Developer Docs', value: 'docs', icon: BookOpen },
+		{ label: 'Analytics & Logs', value: 'analytics', icon: BarChart3 }
 	];
 
 	// Global keyboard shortcuts matching Nuxt UI via yaxa-svelte
@@ -189,19 +204,19 @@
 	});
 </script>
 
-<div class="flex min-h-screen flex-col bg-neutral-950 text-neutral-100">
+<div class="flex min-h-screen flex-col bg-white text-neutral-900 transition-colors dark:bg-neutral-950 dark:text-neutral-100">
 	<!-- Navbar Header -->
 	<header
-		class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 px-8 py-3.5"
+		class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-8 py-3.5 backdrop-blur-md transition-colors dark:border-neutral-800 dark:bg-neutral-950/80"
 	>
 		<div class="flex items-center gap-6">
 			<div class="flex items-center gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary-500/40 bg-primary-500/20 text-xs font-extrabold text-primary-400 shadow-inner"
+					class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary-500/40 bg-primary-500/20 text-xs font-extrabold text-primary-500 shadow-inner dark:text-primary-400"
 				>
 					OG
 				</div>
-				<span class="text-lg font-bold tracking-tight text-white">OG Engine Platform</span>
+				<span class="text-lg font-bold tracking-tight text-neutral-900 dark:text-white">OG Engine Platform</span>
 			</div>
 			<div class="w-auto">
 				<Tabs items={tabItems} bind:value={activeTab} variant="segmented" />
@@ -253,8 +268,25 @@
 				</Button>
 			{/if}
 
+			<!-- Light / Dark Mode Toggle Button -->
+			<Button
+				color="neutral"
+				variant="outline"
+				size="sm"
+				square
+				onclick={() => colorMode.toggle()}
+				title={colorMode.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+				aria-label="Toggle Theme"
+			>
+				{#if colorMode.isDark}
+					<Icon icon={Sun} size="xs" class="text-amber-400" />
+				{:else}
+					<Icon icon={Moon} size="xs" class="text-neutral-700" />
+				{/if}
+			</Button>
+
 			<!-- User Auth Profile Widget -->
-			<div class="flex items-center gap-2.5 border-l border-neutral-800 pl-3">
+			<div class="flex items-center gap-2.5 border-l border-neutral-200 pl-3 dark:border-neutral-800">
 				{#if data.user}
 					<Badge
 						color="primary"
@@ -262,7 +294,7 @@
 						size="sm"
 						class="flex items-center gap-1 font-mono"
 					>
-						<Icon icon={Coins} size="xs" class="text-primary-400" />
+						<Icon icon={Coins} size="xs" class="text-primary-500 dark:text-primary-400" />
 						<span>{data.user.creditsRemaining ?? 10} credits</span>
 					</Badge>
 					<div class="flex items-center gap-2">
@@ -271,7 +303,7 @@
 						{:else}
 							<Avatar alt={data.user.name || 'User'} size="xs" />
 						{/if}
-						<span class="max-w-[120px] truncate text-xs font-medium text-neutral-300">
+						<span class="max-w-[120px] truncate text-xs font-medium text-neutral-700 dark:text-neutral-300">
 							{data.user.name || data.user.email}
 						</span>
 					</div>
@@ -314,7 +346,7 @@
 			/>
 		{:else}
 			<AuthGatedState
-				icon="key"
+				icon={Key}
 				iconColorClass="text-primary-400"
 				title="API Keys & Credit Balances"
 				description="Sign in with GitHub to generate programmatic API keys, purchase credit bundles, and receive 10 free renders."
@@ -334,7 +366,7 @@
 			<AnalyticsTab analyticsData={data.analytics} />
 		{:else}
 			<AuthGatedState
-				icon="sparkles"
+				icon={Sparkles}
 				iconColorClass="text-emerald-400"
 				title="Private Usage Analytics"
 				description="Sign in with GitHub to view your real-time cache efficiency, template performance, and API request audit logs."

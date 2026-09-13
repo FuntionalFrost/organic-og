@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { LegalDocument, Container, Button, Icon } from 'yaxa-svelte';
+	import { LegalDocument, Container, Button, Icon, Seo } from 'yaxa-svelte';
 </script>
 
-<svelte:head>
-	<title>Privacy Policy · OG Engine</title>
-</svelte:head>
+<Seo
+	title="Privacy Policy"
+	description="Privacy policy, data protection, and GDPR compliance disclosures for OG Engine API and dashboard services."
+	canonical="https://ogengine.dev/privacy"
+/>
 
 <div class="min-h-screen bg-neutral-950 py-12 text-neutral-100">
 	<Container size="lg">

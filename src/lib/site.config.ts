@@ -10,22 +10,21 @@ export const siteConfig = defineSiteConfig({
 	defaultLocale: 'en',
 	logo: '/favicon.svg',
 	author: {
-		name: 'OG Engine Team',
+		name: 'OG Engine',
 		url: 'https://ogengine.dev',
 		twitter: '@ogengine',
 		github: 'https://github.com'
 	},
 	company: {
-		legalName: 'OG Engine Inc.',
-		address: 'Tech District, Suite 400',
+		legalName: 'OG Engine',
 		country: 'US',
-		contactEmail: 'support@ogengine.dev'
+		contactEmail: 'devfrost@protonmail.com'
 	},
 	legal: {
 		paymentProcessor: 'polar',
 		governingLaw: 'Delaware, USA',
 		refundDays: 14,
-		dpoEmail: 'privacy@ogengine.dev',
+		dpoEmail: 'devfrost@protonmail.com',
 		links: {
 			privacy: '/privacy',
 			terms: '/terms',
@@ -50,10 +49,13 @@ export const siteConfig = defineSiteConfig({
 			'Satori',
 			'social cards',
 			'Twitter cards',
+			'meta tags generator',
+			'social preview generator',
 			'developer tools',
 			'SVG to PNG',
 			'edge rendering',
-			'yaxa-svelte'
+			'yaxa-svelte',
+			'automated OG image API'
 		],
 		robots: {
 			index: true,
@@ -63,14 +65,42 @@ export const siteConfig = defineSiteConfig({
 	sitemap: {
 		changefreq: 'daily',
 		priority: 1.0,
-		exclude: ['/api/keys/*', '/api/checkout/*', '/api/sign', '/api/analytics', '/api/webhooks/*']
+		exclude: [
+			'/api/keys/*',
+			'/api/checkout/*',
+			'/api/sign',
+			'/api/analytics',
+			'/api/webhooks/*',
+			'/api/auth/*'
+		]
 	},
 	robots: {
 		rules: [
 			{
 				userAgent: '*',
-				allow: ['/', '/docs', '/privacy', '/terms', '/refunds', '/impressum', '/api/og'],
-				disallow: ['/api/keys', '/api/checkout', '/api/sign', '/api/analytics', '/api/webhooks']
+				allow: [
+					'/',
+					'/#studio',
+					'/#keys',
+					'/#docs',
+					'/#analytics',
+					'/privacy',
+					'/terms',
+					'/refunds',
+					'/impressum',
+					'/api/og',
+					'/sitemap.xml',
+					'/sitemap.xsl',
+					'/site.webmanifest'
+				],
+				disallow: [
+					'/api/keys',
+					'/api/checkout',
+					'/api/sign',
+					'/api/analytics',
+					'/api/webhooks',
+					'/api/auth'
+				]
 			}
 		]
 	},

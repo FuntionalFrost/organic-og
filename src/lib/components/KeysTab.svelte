@@ -22,13 +22,13 @@
 
 <main class="mx-auto w-full max-w-7xl flex-1 space-y-6 p-8">
 	<div>
-		<h1 class="text-xl font-bold text-white">API Keys & Credits</h1>
-		<p class="text-sm text-neutral-400">
+		<h1 class="text-xl font-bold text-neutral-900 dark:text-white">API Keys & Credits</h1>
+		<p class="text-sm text-neutral-600 dark:text-neutral-400">
 			Manage programmatic access tokens and monitor credit balances.
 		</p>
 	</div>
 
-	<div class="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900">
+	<div class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
 		<DataTable
 			data={keysList}
 			{columns}
@@ -36,7 +36,7 @@
 		>
 			{#snippet cell(item, col)}
 				{#if col.key === 'name'}
-					<span class="font-medium text-neutral-100">{item.name}</span>
+					<span class="font-medium text-neutral-900 dark:text-neutral-100">{item.name}</span>
 				{:else if col.key === 'prefix'}
 					<span class="font-mono text-xs text-neutral-400">{item.prefix}</span>
 				{:else if col.key === 'creditsRemaining'}

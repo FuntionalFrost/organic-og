@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { LegalDocument, Container, Button, Icon } from 'yaxa-svelte';
+	import { LegalDocument, Container, Button, Icon, Seo } from 'yaxa-svelte';
 </script>
 
-<svelte:head>
-	<title>Cancellation & Refunds · OG Engine</title>
-</svelte:head>
+<Seo
+	title="Cancellation & Refunds"
+	description="14-day refund policy, cancellation terms, and credit balance conditions for OG Engine."
+	canonical="https://ogengine.dev/refunds"
+/>
 
 <div class="min-h-screen bg-neutral-950 py-12 text-neutral-100">
 	<Container size="lg">

@@ -66,7 +66,8 @@ export const GET: RequestHandler = async ({ url, request }) => {
 				isWatermarked = true;
 			}
 		} else {
-			throw error(401, 'Missing authorization key or signature.');
+			// Public social crawlers and preview demo fallback
+			isWatermarked = true;
 		}
 
 		const templateName = ((query.template as string) || 'saas') as TemplateName;

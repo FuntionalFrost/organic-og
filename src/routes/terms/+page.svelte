@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { LegalDocument, Container, Button, Icon } from 'yaxa-svelte';
+	import { LegalDocument, Container, Button, Icon, Seo } from 'yaxa-svelte';
 </script>
 
-<svelte:head>
-	<title>Terms of Service · OG Engine</title>
-</svelte:head>
+<Seo
+	title="Terms of Service"
+	description="Terms of service, usage limits, and API licensing agreements for OG Engine."
+	canonical="https://ogengine.dev/terms"
+/>
 
 <div class="min-h-screen bg-neutral-950 py-12 text-neutral-100">
 	<Container size="lg">

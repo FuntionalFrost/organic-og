@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { LegalDocument, Container, Button, Icon } from 'yaxa-svelte';
+	import { LegalDocument, Container, Button, Icon, Seo } from 'yaxa-svelte';
 </script>
 
-<svelte:head>
-	<title>Legal Notice (Impressum) · OG Engine</title>
-</svelte:head>
+<Seo
+	title="Legal Notice (Impressum)"
+	description="Legal notice, operator information, and contact details for OG Engine."
+	canonical="https://ogengine.dev/impressum"
+/>
 
 <div class="min-h-screen bg-neutral-950 py-12 text-neutral-100">
 	<Container size="lg">

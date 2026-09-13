@@ -1,5 +1,6 @@
-@import 'yaxa-svelte/yaxa.css';
 @import 'tailwindcss';
+@source "../../node_modules/yaxa-svelte";
+@import 'yaxa-svelte/yaxa.css';
 @plugin '@tailwindcss/typography';
 
 @theme {

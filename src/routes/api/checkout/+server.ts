@@ -87,6 +87,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		} else if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
 			baseUrl = `https://${baseUrl}`;
 		}
+		baseUrl = baseUrl.replace(/\/+$/, '');
 
 		const successUrl = `${baseUrl}/?status=success&session_id={CHECKOUT_ID}`;
 

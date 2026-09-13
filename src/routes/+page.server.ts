@@ -9,7 +9,7 @@ import { siteConfig } from '$lib/site.config';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const currentUser = locals.user;
-	const baseUrl = env.PUBLIC_BASE_URL || env.ORIGIN || url.origin;
+	const baseUrl = (env.PUBLIC_BASE_URL || env.ORIGIN || url.origin).replace(/\/+$/, '');
 
 	// 1. Compute default root signed OG URL
 	const defaultOgParams = {

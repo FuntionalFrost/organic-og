@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
@@ -7,7 +8,9 @@ import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 
 export const auth = betterAuth({
-	baseURL: env.BETTER_AUTH_URL || env.ORIGIN || 'http://localhost:5173',
+	baseURL: dev
+		? 'http://localhost:5173'
+		: env.BETTER_AUTH_URL || env.ORIGIN || 'http://localhost:5173',
 	secret:
 		env.BETTER_AUTH_SECRET ||
 		env.OG_SIGNING_SECRET ||

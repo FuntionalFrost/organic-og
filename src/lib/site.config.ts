@@ -6,7 +6,7 @@ export const siteConfig = defineSiteConfig({
 	description:
 		'High-performance dynamic OpenGraph image generator built with SvelteKit, Native SVG, and Rust-powered Resvg. 5 responsive templates, HMAC URL signing, API key management, and real-time analytics with Zero WASM.',
 	url: 'https://organic-og.netlify.app',
-	version: '1.2.0',
+	version: '1.3.0',
 	defaultLocale: 'en',
 	logo: '/favicon.svg',
 	author: {
@@ -37,7 +37,7 @@ export const siteConfig = defineSiteConfig({
 	seo: {
 		titleTemplate: '%s · Organic-OG',
 		defaultOgImage:
-			'/api/og?template=saas&title=Organic-OG&description=Automated+Social+Cards+at+the+Edge&badge=v1.2+Live',
+			'/api/og?template=saas&theme=brand&title=Organic-OG&description=Instant+Dynamic+Social+Cards+%26+OpenGraph+Images&badge=v1.3+Live',
 		twitterCard: 'summary_large_image',
 		keywords: [
 			'OpenGraph generator',
@@ -78,10 +78,6 @@ export const siteConfig = defineSiteConfig({
 				userAgent: '*',
 				allow: [
 					'/',
-					'/#studio',
-					'/#keys',
-					'/#docs',
-					'/#analytics',
 					'/privacy',
 					'/terms',
 					'/refunds',

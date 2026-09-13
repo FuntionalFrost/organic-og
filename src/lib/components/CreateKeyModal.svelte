@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Modal, Button, Input, FormField, toast } from 'yaxa-svelte';
+	import { Modal, Button, Input, FormField, useClipboard, toast } from 'yaxa-svelte';
 	import type { ApiKeyItem } from '$lib/types/dashboard';
 
 	interface Props {
@@ -12,6 +12,7 @@
 	let keyName = $state('');
 	let isSubmitting = $state(false);
 	let generatedRawKey = $state<string | null>(null);
+	const clipboard = useClipboard();
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
@@ -50,7 +51,7 @@
 
 	function copyKey() {
 		if (generatedRawKey) {
-			navigator.clipboard.writeText(generatedRawKey);
+			clipboard.copy(generatedRawKey);
 			toast.success('Copied API Key to clipboard');
 		}
 	}

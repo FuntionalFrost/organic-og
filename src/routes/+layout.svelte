@@ -44,6 +44,17 @@
 	];
 </script>
 
+<svelte:head>
+	<link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="manifest" href="/site.webmanifest" />
+	<meta name="application-name" content={siteConfig.name} />
+	<meta name="apple-mobile-web-app-title" content={siteConfig.name} />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="mobile-web-app-capable" content="yes" />
+</svelte:head>
+
 <Seo config={siteConfig} schema={richSchemas} />
 <Favicons config={siteConfig} />
 

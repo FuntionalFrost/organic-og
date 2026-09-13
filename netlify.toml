@@ -12,6 +12,7 @@
 # Netlify Serverless Function configuration for Native Rust Modules (Zero-WASM)
 [functions]
   node_bundler = "esbuild"
+  included_files = ["src/lib/server/assets/fonts/**"]
   external_node_modules = ["@resvg/resvg-js"]
 
 # Performance Edge Caching Headers for Dynamic OG Endpoints

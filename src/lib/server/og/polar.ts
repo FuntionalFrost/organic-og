@@ -1,5 +1,6 @@
 // src/lib/server/og/polar.ts
 import { env } from '$env/dynamic/private';
+import { getPolarClient, createPolarCheckout as yaxaCreateCheckout } from 'yaxa-svelte/polar';
 
 export type PackageTier = 'starter' | 'growth' | 'scale';
 
@@ -36,42 +37,4 @@ export const CREDIT_PACKAGES: Record<PackageTier, CreditPackage> = {
 	}
 };
 
-export interface CreatePolarCheckoutParams {
-	products: string[];
-	successUrl: string;
-	metadata?: Record<string, string>;
-}
-
-export interface PolarCheckoutResponse {
-	id: string;
-	url: string;
-}
-
-export async function createPolarCheckout(
-	accessToken: string,
-	params: CreatePolarCheckoutParams
-): Promise<PolarCheckoutResponse> {
-	if (!accessToken) {
-		throw new Error('Missing Polar Access Token.');
-	}
-
-	const res = await fetch('https://api.polar.sh/v1/checkouts/', {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${accessToken}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			products: params.products,
-			success_url: params.successUrl,
-			metadata: params.metadata || {}
-		})
-	});
-
-	if (!res.ok) {
-		const errorText = await res.text();
-		throw new Error(`Polar checkout creation failed (${res.status}): ${errorText}`);
-	}
-
-	return (await res.json()) as PolarCheckoutResponse;
-}
+export { getPolarClient, yaxaCreateCheckout as createPolarCheckout };

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, toast } from 'yaxa-svelte';
+	import { Card, Button, ButtonGroup, Badge, useClipboard, toast } from 'yaxa-svelte';
 	import type { StudioState } from '$lib/types/dashboard';
 	import {
 		generateCurlSnippet,
@@ -18,6 +18,7 @@
 	let { studioState, apiKeyPrefix, signedPreviewUrl, baseUrl }: Props = $props();
 
 	let docLanguage = $state<'curl' | 'typescript' | 'python' | 'svelte'>('curl');
+	const clipboard = useClipboard();
 
 	let generatedCode = $derived.by(() => {
 		switch (docLanguage) {
@@ -78,8 +79,8 @@
 	];
 
 	function copySnippet() {
-		navigator.clipboard.writeText(generatedCode);
-		toast.success('Copied Code Snippet');
+		clipboard.copy(generatedCode);
+		toast.success('Copied Code Snippet to Clipboard');
 	}
 </script>
 
@@ -93,17 +94,15 @@
 
 	<!-- 1. Interactive SDK Code Generator -->
 	<section class="space-y-4">
-		<div class="flex items-center justify-between">
+		<div class="flex flex-wrap items-center justify-between gap-3">
 			<h2
 				class="text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
 			>
 				Live SDK Snippets (Synced with Studio)
 			</h2>
-			<div
-				class="flex items-center gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900"
-			>
+			<ButtonGroup>
 				<Button
-					variant={docLanguage === 'curl' ? 'solid' : 'ghost'}
+					variant={docLanguage === 'curl' ? 'solid' : 'outline'}
 					color="primary"
 					size="xs"
 					onclick={() => (docLanguage = 'curl')}
@@ -111,7 +110,7 @@
 					cURL
 				</Button>
 				<Button
-					variant={docLanguage === 'typescript' ? 'solid' : 'ghost'}
+					variant={docLanguage === 'typescript' ? 'solid' : 'outline'}
 					color="primary"
 					size="xs"
 					onclick={() => (docLanguage = 'typescript')}
@@ -119,7 +118,7 @@
 					TypeScript
 				</Button>
 				<Button
-					variant={docLanguage === 'python' ? 'solid' : 'ghost'}
+					variant={docLanguage === 'python' ? 'solid' : 'outline'}
 					color="primary"
 					size="xs"
 					onclick={() => (docLanguage = 'python')}
@@ -127,25 +126,28 @@
 					Python
 				</Button>
 				<Button
-					variant={docLanguage === 'svelte' ? 'solid' : 'ghost'}
+					variant={docLanguage === 'svelte' ? 'solid' : 'outline'}
 					color="primary"
 					size="xs"
 					onclick={() => (docLanguage = 'svelte')}
 				>
 					SvelteKit / HTML
 				</Button>
-			</div>
+			</ButtonGroup>
 		</div>
 
-		<div
-			class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
-		>
+		<Card class="overflow-hidden p-0 shadow-xl">
 			<div
 				class="flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-6 py-3 dark:border-neutral-800 dark:bg-neutral-950"
 			>
-				<span class="font-mono text-xs text-neutral-500 dark:text-neutral-400"
-					>{docLanguage.toUpperCase()} Implementation</span
-				>
+				<div class="flex items-center gap-2">
+					<Badge color="primary" variant="subtle" size="xs" class="font-mono uppercase">
+						{docLanguage}
+					</Badge>
+					<span class="font-mono text-xs text-neutral-500 dark:text-neutral-400">
+						Implementation Example
+					</span>
+				</div>
 				<Button color="neutral" variant="ghost" size="xs" onclick={copySnippet}>
 					📋 Copy Snippet
 				</Button>
@@ -154,7 +156,7 @@
 				class="overflow-x-auto p-6 font-mono text-xs leading-relaxed text-neutral-800 dark:text-neutral-200"><code
 					>{generatedCode}</code
 				></pre>
-		</div>
+		</Card>
 	</section>
 
 	<!-- 2. Authentication Methods -->
@@ -165,9 +167,7 @@
 			Authentication Reference
 		</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<div
-				class="space-y-2 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60"
-			>
+			<Card class="space-y-2 p-5">
 				<div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white">
 					<span class="text-amber-500 dark:text-amber-400">🔑</span>
 					<span>1. Bearer API Key</span>
@@ -178,18 +178,16 @@
 				</p>
 				<pre
 					class="mt-2 overflow-x-auto rounded border border-neutral-200 bg-neutral-50 p-2.5 font-mono text-xs text-amber-600 dark:border-transparent dark:bg-neutral-950 dark:text-amber-200">Authorization: Bearer og_live_...</pre>
-			</div>
+			</Card>
 
-			<div
-				class="space-y-2 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60"
-			>
+			<Card class="space-y-2 p-5">
 				<div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white">
 					<span class="text-emerald-500 dark:text-emerald-400">🛡️</span>
-					<span
-						>2. HMAC URL Signature (<code
+					<span>
+						2. HMAC URL Signature (<code
 							class="font-mono text-xs text-emerald-600 dark:text-emerald-300">s=</code
-						>)</span
-					>
+						>)
+					</span>
 				</div>
 				<p class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
 					Ideal for public <code class="text-neutral-700 dark:text-neutral-300">&lt;meta&gt;</code> tags.
@@ -197,7 +195,7 @@
 				</p>
 				<pre
 					class="mt-2 overflow-x-auto rounded border border-neutral-200 bg-neutral-50 p-2.5 font-mono text-xs text-emerald-600 dark:border-transparent dark:bg-neutral-950 dark:text-emerald-200">/api/og?title=Edge&s=4f8b92a1c0d3e5f7</pre>
-			</div>
+			</Card>
 		</div>
 	</section>
 
@@ -209,41 +207,31 @@
 			Endpoints
 		</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<div
-				class="space-y-2 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60"
-			>
+			<Card class="space-y-2 p-5">
 				<div class="flex items-center gap-3">
-					<span
-						class="rounded border border-emerald-300 bg-emerald-100 px-2 py-0.5 font-mono text-xs font-bold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400"
-						>GET</span
-					>
-					<span class="font-mono text-sm font-semibold text-neutral-800 dark:text-neutral-200"
-						>/api/og</span
-					>
+					<Badge color="success" variant="solid" size="xs" class="font-mono font-bold">GET</Badge>
+					<span class="font-mono text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+						/api/og
+					</span>
 				</div>
 				<p class="text-xs text-neutral-600 dark:text-neutral-400">
 					Rasterizes and streams a binary PNG image (1200x630 px) directly from edge cache or native
 					Node.js renderers.
 				</p>
-			</div>
+			</Card>
 
-			<div
-				class="space-y-2 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60"
-			>
+			<Card class="space-y-2 p-5">
 				<div class="flex items-center gap-3">
-					<span
-						class="rounded border border-blue-300 bg-blue-100 px-2 py-0.5 font-mono text-xs font-bold text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-400"
-						>POST</span
-					>
-					<span class="font-mono text-sm font-semibold text-neutral-800 dark:text-neutral-200"
-						>/api/sign</span
-					>
+					<Badge color="primary" variant="solid" size="xs" class="font-mono font-bold">POST</Badge>
+					<span class="font-mono text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+						/api/sign
+					</span>
 				</div>
 				<p class="text-xs text-neutral-600 dark:text-neutral-400">
 					Generates a 16-character canonical HMAC signature and pre-signed URL from any query
 					parameter payload.
 				</p>
-			</div>
+			</Card>
 		</div>
 	</section>
 
@@ -254,9 +242,7 @@
 		>
 			URL Parameters Specification
 		</h2>
-		<div
-			class="overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900"
-		>
+		<Card class="overflow-x-auto p-0 shadow-xs">
 			<table class="w-full text-left text-sm">
 				<thead
 					class="border-b border-neutral-200 bg-neutral-50 font-mono text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400"
@@ -273,20 +259,20 @@
 				>
 					{#each queryParams as item (item.param)}
 						<tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-							<td class="p-3 font-mono font-bold text-primary-600 dark:text-primary-400"
-								>{item.param}</td
-							>
-							<td class="p-3 font-mono text-xs text-neutral-500 dark:text-neutral-400"
-								>{item.type}</td
-							>
-							<td class="p-3 font-mono text-xs text-neutral-400 dark:text-neutral-500"
-								>{item.default}</td
-							>
+							<td class="p-3 font-mono font-bold text-primary-600 dark:text-primary-400">
+								{item.param}
+							</td>
+							<td class="p-3 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+								{item.type}
+							</td>
+							<td class="p-3 font-mono text-xs text-neutral-400 dark:text-neutral-500">
+								{item.default}
+							</td>
 							<td class="p-3 text-xs text-neutral-700 dark:text-neutral-300">{item.desc}</td>
 						</tr>
 					{/each}
 				</tbody>
 			</table>
-		</div>
+		</Card>
 	</section>
 </main>

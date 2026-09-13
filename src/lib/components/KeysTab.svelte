@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DataTable, Button, Badge } from 'yaxa-svelte';
+	import { DataTable, Button, Badge, Card, Progress } from 'yaxa-svelte';
 	import type { ApiKeyItem } from '$lib/types/dashboard';
 
 	interface Props {
@@ -10,6 +10,9 @@
 	}
 
 	let { keysList = [], onopenBuyCredits, ontestRender, onrevokeKey }: Props = $props();
+
+	const totalCredits = $derived(keysList.reduce((acc, k) => acc + (k.creditsRemaining || 0), 0));
+	const totalRenders = $derived(keysList.reduce((acc, k) => acc + (k.totalRenders || 0), 0));
 
 	const columns = [
 		{ key: 'name', label: 'Key Name' },
@@ -28,9 +31,45 @@
 		</p>
 	</div>
 
-	<div
-		class="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900"
-	>
+	<!-- Credit Health Overview Card -->
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+		<Card class="space-y-2 p-5">
+			<span class="text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400">
+				Total Available Credits
+			</span>
+			<div class="font-mono text-2xl font-bold text-neutral-900 dark:text-white">
+				{totalCredits.toLocaleString()}
+			</div>
+			<Progress
+				value={Math.min(100, Math.max(10, totalCredits))}
+				max={1000}
+				color="primary"
+				size="sm"
+			/>
+		</Card>
+
+		<Card class="space-y-2 p-5">
+			<span class="text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400">
+				Total Generated Images
+			</span>
+			<div class="font-mono text-2xl font-bold text-primary-600 dark:text-primary-400">
+				{totalRenders.toLocaleString()}
+			</div>
+			<span class="text-xs text-neutral-500">Across all provisioned keys</span>
+		</Card>
+
+		<Card class="space-y-2 p-5">
+			<span class="text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400">
+				Active Key Credentials
+			</span>
+			<div class="font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+				{keysList.length}
+			</div>
+			<span class="text-xs text-neutral-500">Bearer token authenticators</span>
+		</Card>
+	</div>
+
+	<Card class="overflow-hidden">
 		<DataTable
 			data={keysList}
 			{columns}
@@ -81,5 +120,5 @@
 				{/if}
 			{/snippet}
 		</DataTable>
-	</div>
+	</Card>
 </main>

@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '$lib/server/db';
 import { apiKeys } from '$lib/server/db/schema';
-import { createPolarCheckout, CREDIT_PACKAGES } from '$lib/server/og/polar';
+import { getPolarClient, createPolarCheckout, CREDIT_PACKAGES } from '$lib/server/og/polar';
 
 const bodySchema = z
 	.object({
@@ -91,9 +91,13 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 		const successUrl = `${baseUrl}/?status=success&session_id={CHECKOUT_ID}`;
 
-		const checkout = await createPolarCheckout(polarToken, {
-			products: [packageConfig.productId],
+		const polarClient = getPolarClient({ accessToken: polarToken, server: 'production' });
+
+		const checkout = await createPolarCheckout({
+			productId: packageConfig.productId,
 			successUrl,
+			customerEmail: locals.user.email,
+			polar: polarClient,
 			metadata: {
 				userId: locals.user.id,
 				...(verifiedKeyId ? { apiKeyId: verifiedKeyId } : {}),

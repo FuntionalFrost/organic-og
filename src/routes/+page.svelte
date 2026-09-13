@@ -8,6 +8,8 @@
 		Avatar,
 		Icon,
 		Kbd,
+		DropdownMenu,
+		type MenuItem,
 		CommandPalette,
 		type CommandItem,
 		useShortcuts,
@@ -231,6 +233,67 @@
 		await authClient.signOut();
 		window.location.reload();
 	}
+
+	const userMenuItems: MenuItem[] = $derived([
+		{
+			id: 'user-header',
+			label: `${data.user?.name || data.user?.email || 'User'} · ${data.user?.creditsRemaining ?? 10} credits`,
+			disabled: true
+		},
+		{
+			id: 'user-sep1',
+			label: '',
+			separator: true
+		},
+		{
+			id: 'menu-studio',
+			label: 'Studio Preview',
+			icon: Sliders,
+			shortcut: '1',
+			onSelect: () => {
+				activeTab = 'studio';
+			}
+		},
+		{
+			id: 'menu-keys',
+			label: 'API Keys & Credits',
+			icon: Key,
+			shortcut: '2',
+			onSelect: () => {
+				activeTab = 'keys';
+			}
+		},
+		{
+			id: 'menu-docs',
+			label: 'Developer Docs',
+			icon: BookOpen,
+			shortcut: '3',
+			onSelect: () => {
+				activeTab = 'docs';
+			}
+		},
+		{
+			id: 'menu-analytics',
+			label: 'Analytics & Logs',
+			icon: BarChart3,
+			shortcut: '4',
+			onSelect: () => {
+				activeTab = 'analytics';
+			}
+		},
+		{
+			id: 'user-sep2',
+			label: '',
+			separator: true
+		},
+		{
+			id: 'sign-out',
+			label: 'Sign Out',
+			icon: LogOut,
+			destructive: true,
+			onSelect: () => handleSignOut()
+		}
+	]);
 
 	$effect(() => {
 		if (page.url.searchParams.get('status') === 'success') {
@@ -573,33 +636,32 @@
 						color="primary"
 						variant="subtle"
 						size="sm"
-						class="flex items-center gap-1 font-mono"
+						class="hidden items-center gap-1 font-mono sm:flex"
 					>
 						<Icon icon={Coins} size="xs" class="text-primary-500 dark:text-primary-400" />
 						<span>{data.user.creditsRemaining ?? 10} credits</span>
 					</Badge>
-					<div class="flex items-center gap-2">
-						{#if data.user.image}
-							<Avatar src={data.user.image} alt={data.user.name || 'User'} size="xs" />
-						{:else}
-							<Avatar alt={data.user.name || 'User'} size="xs" />
-						{/if}
-						<span
-							class="max-w-[120px] truncate text-xs font-medium text-neutral-700 dark:text-neutral-300"
-						>
-							{data.user.name || data.user.email}
-						</span>
-					</div>
-					<Button
-						color="neutral"
-						variant="ghost"
-						size="xs"
-						square
-						onclick={handleSignOut}
-						title="Sign Out"
-					>
-						<Icon icon={LogOut} size="xs" />
-					</Button>
+					<DropdownMenu items={userMenuItems}>
+						{#snippet trigger()}
+							<button
+								type="button"
+								class="flex cursor-pointer items-center gap-2 rounded-lg p-1 transition-colors hover:bg-neutral-100 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 dark:hover:bg-neutral-800"
+								aria-label="User Account Menu"
+							>
+								{#if data.user.image}
+									<Avatar src={data.user.image} alt={data.user.name || 'User'} size="xs" />
+								{:else}
+									<Avatar alt={data.user.name || 'User'} size="xs" />
+								{/if}
+								<span
+									class="max-w-[120px] truncate text-xs font-medium text-neutral-700 dark:text-neutral-300"
+								>
+									{data.user.name || data.user.email}
+								</span>
+								<Icon name="chevron-down" size="xs" class="text-neutral-400" />
+							</button>
+						{/snippet}
+					</DropdownMenu>
 				{:else}
 					<Button color="neutral" variant="outline" size="sm" class="gap-2" onclick={handleSignIn}>
 						<Icon name="github" size="xs" />

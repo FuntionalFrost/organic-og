@@ -1,2 +1,5 @@
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - yaxa-svelte@1.2.0
+  - yaxa-svelte@1.2.1

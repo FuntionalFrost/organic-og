@@ -1,9 +1,16 @@
 <script lang="ts">
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import { YaxaApp, Footer } from 'yaxa-svelte';
+	import { siteConfig } from '$lib/site.config';
 
 	let { children } = $props();
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
-{@render children()}
+<YaxaApp config={siteConfig}>
+	<div class="flex min-h-screen flex-col">
+		<div class="flex-1">
+			{@render children()}
+		</div>
+		<Footer />
+	</div>
+</YaxaApp>

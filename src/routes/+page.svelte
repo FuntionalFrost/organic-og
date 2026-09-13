@@ -7,6 +7,9 @@
 		Badge,
 		Avatar,
 		Icon,
+		Kbd,
+		CommandPalette,
+		type CommandItem,
 		useShortcuts,
 		useColorMode,
 		toast
@@ -24,7 +27,15 @@
 		BarChart3,
 		Sparkles,
 		Sun,
-		Moon
+		Moon,
+		Search,
+		LayoutTemplate,
+		Palette,
+		ExternalLink,
+		ShieldCheck,
+		FileText,
+		Receipt,
+		Scale
 	} from '@lucide/svelte';
 	import { authClient } from '$lib/utils/authClient';
 	import type { StudioState, ApiKeyItem } from '$lib/types/dashboard';
@@ -42,6 +53,7 @@
 
 	const colorMode = useColorMode();
 	let activeTab = $state('studio');
+	let isCommandPaletteOpen = $state(false);
 	const tabItems = [
 		{ label: 'Studio Preview', value: 'studio', icon: Sliders },
 		{ label: 'API Keys & Credits', value: 'keys', icon: Key },
@@ -62,6 +74,12 @@
 		},
 		'4': () => {
 			activeTab = 'analytics';
+		},
+		meta_k: () => {
+			isCommandPaletteOpen = !isCommandPaletteOpen;
+		},
+		meta_enter: () => {
+			updateSignedUrl();
 		}
 	});
 
@@ -173,6 +191,14 @@
 		toast.success('Meta tag copied to clipboard!');
 	}
 
+	async function copyImageUrl() {
+		const fullUrl = signedPreviewUrl.startsWith('http')
+			? signedPreviewUrl
+			: `${data.baseUrl}${signedPreviewUrl}`;
+		await navigator.clipboard.writeText(fullUrl);
+		toast.success('Image URL copied to clipboard!');
+	}
+
 	async function downloadImage() {
 		try {
 			const targetUrl = signedPreviewUrl.startsWith('http')
@@ -212,6 +238,240 @@
 			invalidateAll();
 		}
 	});
+
+	const commandItems: CommandItem[] = [
+		// Navigation
+		{
+			id: 'nav-studio',
+			label: 'Studio Preview',
+			description: 'Interactive OpenGraph canvas and multi-platform previewer',
+			icon: Sliders,
+			shortcut: '1',
+			group: 'Navigation',
+			onSelect: () => {
+				activeTab = 'studio';
+			}
+		},
+		{
+			id: 'nav-keys',
+			label: 'API Keys & Credits',
+			description: 'Manage HMAC signing keys, top up credits, and review allowances',
+			icon: Key,
+			shortcut: '2',
+			group: 'Navigation',
+			onSelect: () => {
+				activeTab = 'keys';
+			}
+		},
+		{
+			id: 'nav-docs',
+			label: 'Developer Documentation',
+			description: 'SvelteKit, Next.js, and HTTP API integration guides',
+			icon: BookOpen,
+			shortcut: '3',
+			group: 'Navigation',
+			onSelect: () => {
+				activeTab = 'docs';
+			}
+		},
+		{
+			id: 'nav-analytics',
+			label: 'Usage Analytics & Audit Logs',
+			description: 'Private edge cache hit ratios and performance metrics',
+			icon: BarChart3,
+			shortcut: '4',
+			group: 'Navigation',
+			onSelect: () => {
+				activeTab = 'analytics';
+			}
+		},
+
+		// Templates
+		{
+			id: 'tpl-saas',
+			label: 'SaaS Card Template',
+			description: 'Hero layout with badge, title, subtitle & branding',
+			icon: LayoutTemplate,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'saas';
+				activeTab = 'studio';
+				toast.success('Applied SaaS template');
+			}
+		},
+		{
+			id: 'tpl-github',
+			label: 'GitHub Repository Template',
+			description: 'Repo metadata with stars, forks, language & owner',
+			icon: Sparkles,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'github';
+				activeTab = 'studio';
+				toast.success('Applied GitHub template');
+			}
+		},
+		{
+			id: 'tpl-blog',
+			label: 'Blog Hero Template',
+			description: 'Editorial article header with reading time & tags',
+			icon: BookOpen,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'blog';
+				activeTab = 'studio';
+				toast.success('Applied Blog template');
+			}
+		},
+		{
+			id: 'tpl-minimal',
+			label: 'Minimalist Border Template',
+			description: 'Clean typographic layout with subtle geometric border',
+			icon: Sliders,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'minimal';
+				activeTab = 'studio';
+				toast.success('Applied Minimalist template');
+			}
+		},
+		{
+			id: 'tpl-ecommerce',
+			label: 'E-Commerce Product Template',
+			description: 'Product showcase with pricing in € and rating',
+			icon: Coins,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'ecommerce';
+				activeTab = 'studio';
+				toast.success('Applied E-Commerce template');
+			}
+		},
+
+		// Themes
+		{
+			id: 'theme-brand',
+			label: 'Brand Gradient Theme',
+			description: 'Vibrant organic emerald & cyan backdrop',
+			icon: Palette,
+			group: 'Themes',
+			onSelect: () => {
+				studioForm.theme = 'brand';
+				activeTab = 'studio';
+				toast.success('Theme set to Brand Gradient');
+			}
+		},
+		{
+			id: 'theme-dark',
+			label: 'Dark Slate Theme',
+			description: 'Deep contrast midnight slate backdrop',
+			icon: Moon,
+			group: 'Themes',
+			onSelect: () => {
+				studioForm.theme = 'dark';
+				activeTab = 'studio';
+				toast.success('Theme set to Dark Slate');
+			}
+		},
+		{
+			id: 'theme-light',
+			label: 'Light Clean Theme',
+			description: 'Crisp bright background for modern cards',
+			icon: Sun,
+			group: 'Themes',
+			onSelect: () => {
+				studioForm.theme = 'light';
+				activeTab = 'studio';
+				toast.success('Theme set to Light Clean');
+			}
+		},
+
+		// Actions
+		{
+			id: 'act-copy-meta',
+			label: 'Copy Meta Tag',
+			description: 'Copy <meta property="og:image" ... /> tag to clipboard',
+			icon: Copy,
+			shortcut: '⌘C',
+			group: 'Actions',
+			onSelect: () => copyMetaTag()
+		},
+		{
+			id: 'act-copy-url',
+			label: 'Copy Image URL',
+			description: 'Copy full signed image URL to clipboard',
+			icon: Copy,
+			group: 'Actions',
+			onSelect: () => copyImageUrl()
+		},
+		{
+			id: 'act-download',
+			label: 'Download PNG Asset',
+			description: 'Download the rendered 1200x630 PNG directly',
+			icon: Download,
+			group: 'Actions',
+			onSelect: () => downloadImage()
+		},
+		{
+			id: 'act-refresh',
+			label: 'Refresh Render Canvas',
+			description: 'Re-sign and reload active studio canvas',
+			icon: RefreshCw,
+			shortcut: '⌘↵',
+			group: 'Actions',
+			onSelect: () => updateSignedUrl()
+		},
+		{
+			id: 'act-toggle-theme',
+			label: 'Toggle Dark / Light Mode',
+			description: 'Switch website UI between light and dark mode',
+			icon: Sparkles,
+			group: 'Actions',
+			onSelect: () => colorMode.toggle()
+		},
+
+		// Legal & Links
+		{
+			id: 'doc-privacy',
+			label: 'Privacy Policy',
+			description: 'GDPR compliance & zero-tracking policy',
+			icon: ShieldCheck,
+			group: 'Legal & Links',
+			href: '/privacy'
+		},
+		{
+			id: 'doc-terms',
+			label: 'Terms of Service',
+			description: 'API licensing & acceptable use conditions',
+			icon: FileText,
+			group: 'Legal & Links',
+			href: '/terms'
+		},
+		{
+			id: 'doc-refunds',
+			label: 'Cancellation & Refund Policy',
+			description: '14-day money-back guarantee terms',
+			icon: Receipt,
+			group: 'Legal & Links',
+			href: '/refunds'
+		},
+		{
+			id: 'doc-impressum',
+			label: 'Impressum / Legal Notice',
+			description: 'Mandatory provider identification pursuant to § 5 TMG',
+			icon: Scale,
+			group: 'Legal & Links',
+			href: '/impressum'
+		},
+		{
+			id: 'ext-github',
+			label: 'GitHub Repository',
+			description: 'View source code & issue tracker on GitHub',
+			icon: ExternalLink,
+			group: 'Legal & Links',
+			href: 'https://github.com/FuntionalFrost'
+		}
+	];
 </script>
 
 <div
@@ -230,6 +490,20 @@
 
 		<!-- Header Actions & Auth Widget -->
 		<div class="flex items-center gap-3">
+			<!-- Command Palette Launcher -->
+			<Button
+				color="neutral"
+				variant="outline"
+				size="sm"
+				class="gap-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+				onclick={() => (isCommandPaletteOpen = true)}
+				aria-label="Open Command Palette"
+			>
+				<Icon icon={Search} size="xs" />
+				<span class="hidden text-xs md:inline">Search commands...</span>
+				<Kbd value="⌘K" size="xs" class="ml-0.5 hidden sm:inline-block" />
+			</Button>
+
 			{#if activeTab === 'studio'}
 				<Button color="neutral" variant="outline" size="sm" class="gap-1.5" onclick={downloadImage}>
 					<Icon icon={Download} size="xs" />
@@ -384,6 +658,13 @@
 			/>
 		{/if}
 	{/if}
+
+	<!-- Command Palette -->
+	<CommandPalette
+		bind:open={isCommandPaletteOpen}
+		items={commandItems}
+		placeholder="Search templates, presets, actions, or shortcuts..."
+	/>
 
 	<!-- Modals -->
 	<CreateKeyModal bind:open={isCreateKeyOpen} oncreated={() => invalidateAll()} />

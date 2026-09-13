@@ -12,17 +12,14 @@ export const siteConfig = defineSiteConfig({
 	author: {
 		name: 'OG Engine',
 		url: 'https://ogengine.dev',
-		twitter: '@ogengine',
-		github: 'https://github.com'
+		github: 'https://github.com/FuntionalFrost'
 	},
 	company: {
 		legalName: 'OG Engine',
-		country: 'US',
 		contactEmail: 'devfrost@protonmail.com'
 	},
 	legal: {
 		paymentProcessor: 'polar',
-		governingLaw: 'Delaware, USA',
 		refundDays: 14,
 		dpoEmail: 'devfrost@protonmail.com',
 		links: {
@@ -111,7 +108,6 @@ export const siteConfig = defineSiteConfig({
 		{ label: 'Docs', href: '/#docs' }
 	],
 	socials: {
-		github: 'https://github.com',
-		twitter: 'https://x.com/ogengine'
+		github: 'https://github.com/FuntionalFrost'
 	}
 });

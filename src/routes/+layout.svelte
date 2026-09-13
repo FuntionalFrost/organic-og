@@ -34,7 +34,7 @@
 			name: siteConfig.name,
 			url: siteConfig.url,
 			logo: `${siteConfig.url}/favicon.svg`,
-			sameAs: [siteConfig.socials?.twitter, siteConfig.socials?.github].filter(Boolean),
+			sameAs: [siteConfig.socials?.github].filter(Boolean) as string[],
 			contactPoint: {
 				'@type': 'ContactPoint',
 				email: siteConfig.company?.contactEmail || 'devfrost@protonmail.com',

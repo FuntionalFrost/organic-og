@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const defaultOgParams = {
 		badge: 'v1.0 Live',
 		description:
-			'High-performance OpenGraph image generator built with SvelteKit, Satori, and Edge Functions.',
+			'High-performance OpenGraph image generator built with SvelteKit, Native SVG, and Edge Functions.',
 		siteName: 'organic-og.netlify.app',
 		template: 'saas',
 		theme: 'brand',
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const seo = definePageSeo({
 		title: 'Organic-OG — Instant OpenGraph & Social Banner Generator',
 		description:
-			'Generate dynamic, branded OpenGraph images on edge runtimes in under 10ms with SvelteKit, Satori, and Resvg.',
+			'Generate dynamic, branded OpenGraph images on edge runtimes in under 10ms with SvelteKit, Native SVG, and Resvg (Zero-WASM).',
 		ogImage: defaultOgUrl,
 		twitterCard: 'summary_large_image',
 		schema: [generateOrganizationSchema(siteConfig), generateWebSiteSchema(siteConfig)]

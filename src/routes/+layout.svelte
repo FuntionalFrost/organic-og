@@ -23,7 +23,7 @@
 			featureList: [
 				'5 Responsive Templates (SaaS, Minimal, Blog, E-commerce, GitHub)',
 				'HMAC-SHA256 URL Signing & Verification',
-				'Sub-50ms Satori SVG to PNG Edge Rendering',
+				'Sub-10ms Native SVG to PNG Edge Rendering (Zero-WASM)',
 				'API Key Management and Usage Analytics',
 				'Real-time Multi-Platform Preview (Twitter/X, Discord, Slack, WhatsApp, LinkedIn, iMessage)'
 			]

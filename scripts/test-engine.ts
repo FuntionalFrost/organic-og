@@ -3,7 +3,7 @@ import process from 'node:process';
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:5173';
 
 async function runVerification() {
-	console.log('🧪 Starting OG Engine End-to-End Verification Suite for SvelteKit (organic-og)\n');
+	console.log('🧪 Starting Organic-OG End-to-End Verification Suite for SvelteKit\n');
 	let passed = 0;
 	let failed = 0;
 
@@ -70,7 +70,7 @@ async function runVerification() {
 			robotsRes.status === 200 &&
 				robotsTxt.includes('User-agent: *') &&
 				robotsTxt.includes('Disallow: /api/keys') &&
-				robotsTxt.includes('Sitemap: https://ogengine.dev/sitemap.xml'),
+				robotsTxt.includes('Sitemap: https://organic-og.netlify.app/sitemap.xml'),
 			'GET /robots.txt returns correct directives and sitemap URL'
 		);
 
@@ -80,8 +80,8 @@ async function runVerification() {
 		assert(
 			sitemapRes.status === 200 &&
 				sitemapXml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">') &&
-				sitemapXml.includes('https://ogengine.dev/privacy') &&
-				sitemapXml.includes('https://ogengine.dev/terms') &&
+				sitemapXml.includes('https://organic-og.netlify.app/privacy') &&
+				sitemapXml.includes('https://organic-og.netlify.app/terms') &&
 				sitemapXml.includes('<changefreq>daily</changefreq>'),
 			'GET /sitemap.xml returns compliant XML sitemap including legal routes'
 		);
@@ -101,7 +101,7 @@ async function runVerification() {
 		const manifestJson = await manifestRes.json();
 		assert(
 			manifestRes.status === 200 &&
-				manifestJson.short_name === 'OG Engine' &&
+				manifestJson.short_name === 'Organic-OG' &&
 				manifestJson.display === 'standalone' &&
 				manifestJson.icons?.[0]?.src === '/favicon.svg',
 			'GET /site.webmanifest returns valid PWA web manifest'
@@ -112,7 +112,7 @@ async function runVerification() {
 		const pageHtml = await pageRes.text();
 		assert(
 			pageRes.status === 200 &&
-				pageHtml.includes('<title>OG Engine — Instant OpenGraph &amp; Social Banner Generator') &&
+				pageHtml.includes('Organic-OG') &&
 				pageHtml.includes('property="og:image"') &&
 				pageHtml.includes('name="twitter:card"') &&
 				pageHtml.includes('application/ld+json') &&

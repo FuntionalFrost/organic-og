@@ -255,7 +255,7 @@
 					</div>
 					<div class="space-y-0.5 border-t border-neutral-800/80 bg-[#0d0e10] p-3">
 						<div class="text-[11px] font-normal text-neutral-500">
-							{studioState.siteName || 'ogengine.io'}
+							{studioState.siteName || 'organic-og.netlify.app'}
 						</div>
 						<div class="truncate text-xs font-semibold text-neutral-200">
 							{studioState.title}
@@ -323,7 +323,7 @@
 							{studioState.title}
 						</div>
 						<div class="text-[11px] text-neutral-400">
-							{studioState.siteName || 'ogengine.io'} • Read more
+							{studioState.siteName || 'organic-og.netlify.app'} • Read more
 						</div>
 					</div>
 				</div>
@@ -356,7 +356,7 @@
 								<div
 									class="text-[10px] font-medium tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
 								>
-									{studioState.siteName || 'ogengine.io'}
+									{studioState.siteName || 'organic-og.netlify.app'}
 								</div>
 								<div class="truncate text-xs font-semibold text-neutral-900 dark:text-neutral-100">
 									{studioState.title}
@@ -374,7 +374,7 @@
 							<span
 								class="max-w-[210px] truncate text-[12px] text-emerald-800 underline dark:text-emerald-200"
 							>
-								https://{studioState.siteName || 'ogengine.io'}
+								https://{studioState.siteName || 'organic-og.netlify.app'}
 							</span>
 							<div
 								class="flex shrink-0 items-center gap-1 text-[10px] text-neutral-600 dark:text-emerald-200/70"

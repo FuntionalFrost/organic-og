@@ -87,7 +87,7 @@
 	let studioForm = $state<StudioState>({
 		title: 'Automate OpenGraph Images with SvelteKit & Yaxa',
 		description: 'Generate dynamic, on-brand social assets on edge runtimes in milliseconds.',
-		siteName: 'ogengine.io',
+		siteName: 'organic-og.netlify.app',
 		badge: 'Production Ready',
 		logoUrl: 'https://avatars.githubusercontent.com/u/28706372?v=4',
 		theme: 'brand',

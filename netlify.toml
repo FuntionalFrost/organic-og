@@ -4,9 +4,15 @@
   publish = "build"
 
 [build.environment]
-  NODE_VERSION = "24"
+  NODE_VERSION = "22"
   PNPM_VERSION = "11.24.0"
+  PNPM_FLAGS = "--shamefully-hoist"
   SECRETS_SCAN_OMIT_KEYS = "PUBLIC_BASE_URL,POLAR_PRODUCT_STARTER,POLAR_PRODUCT_GROWTH,POLAR_PRODUCT_SCALE,NODE_VERSION"
+
+# Netlify Serverless Function configuration for Native Rust Modules (Zero-WASM)
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@resvg/resvg-js"]
 
 # Performance Edge Caching Headers for Dynamic OG Endpoints
 [[headers]]
@@ -45,4 +51,11 @@
   [headers.values]
     Cache-Control = "public, max-age=86400"
     Content-Type = "image/svg+xml; charset=utf-8"
+
+# Favicon.ico Fallback Redirect
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/favicon.svg"
+  status = 200
+
 

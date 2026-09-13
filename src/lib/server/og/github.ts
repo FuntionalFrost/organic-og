@@ -1,94 +1,66 @@
 import type { TemplateProps } from './types';
-import { icons, h } from './helpers';
+import { createStarIconSvg, createForkIconSvg, escapeXml, wrapSvgText } from './helpers';
 
-export function renderGithubTemplate(props: TemplateProps) {
+export function renderGithubTemplate(props: TemplateProps): string {
 	const repoName = props.title || 'repository';
 	const owner = props.siteName || 'github.com / repo';
 	const language = props.language || 'TypeScript';
 
-	return h(
-		'div',
-		{
-			height: '100%',
-			width: '100%',
-			flexDirection: 'column',
-			justifyContent: 'space-between',
-			backgroundColor: '#0d1117',
-			color: '#ffffff',
-			padding: '80px',
-			fontFamily: 'Inter'
-		},
-		[
-			// Top repo breadcrumb
-			h('div', { fontSize: 28, color: '#58a6ff', fontWeight: 600 }, owner),
-			// Main Title
-			h(
-				'div',
-				{
-					fontSize: 64,
-					fontWeight: 800,
-					letterSpacing: '-0.02em',
-					lineHeight: 1.1
-				},
-				repoName
-			),
-			// Metric Badges
-			h('div', { alignItems: 'center', gap: '16px' }, [
-				props.stars
-					? h(
-							'div',
-							{
-								alignItems: 'center',
-								gap: '8px',
-								backgroundColor: '#161b22',
-								border: '1px solid #30363d',
-								padding: '8px 16px',
-								borderRadius: '8px',
-								fontSize: 20,
-								color: '#c9d1d9'
-							},
-							[icons.star, `${props.stars} stars`]
-						)
-					: null,
-				props.forks
-					? h(
-							'div',
-							{
-								alignItems: 'center',
-								gap: '8px',
-								backgroundColor: '#161b22',
-								border: '1px solid #30363d',
-								padding: '8px 16px',
-								borderRadius: '8px',
-								fontSize: 20,
-								color: '#c9d1d9'
-							},
-							[icons.fork, `${props.forks} forks`]
-						)
-					: null,
-				h(
-					'div',
-					{
-						alignItems: 'center',
-						gap: '8px',
-						backgroundColor: '#161b22',
-						border: '1px solid #30363d',
-						padding: '8px 16px',
-						borderRadius: '8px',
-						fontSize: 20,
-						color: '#c9d1d9'
-					},
-					[
-						h('div', {
-							width: '12px',
-							height: '12px',
-							borderRadius: '50%',
-							backgroundColor: '#3178c6'
-						}),
-						language
-					]
-				)
-			])
-		]
-	);
+	const titleLines = wrapSvgText(repoName, 32, 2);
+
+	const breadcrumbSvg = `<text x="80" y="110" font-family="Inter, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#58a6ff">${escapeXml(owner)}</text>`;
+
+	const titleSvg = `
+		<text x="80" y="270" font-family="Inter, -apple-system, sans-serif" font-size="64" font-weight="800" fill="#ffffff" letter-spacing="-0.02em">
+			${titleLines.map((line, i) => `<tspan x="80" dy="${i === 0 ? 0 : 76}">${escapeXml(line)}</tspan>`).join('')}
+		</text>
+	`;
+
+	// Metrics row at y: 490
+	let currentX = 80;
+	let starsSvg = '';
+	if (props.stars) {
+		const label = `${props.stars} stars`;
+		const width = label.length * 11 + 50;
+		starsSvg = `
+			<g transform="translate(${currentX}, 490)">
+				<rect width="${width}" height="44" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1" />
+				${createStarIconSvg(14, 12, 20)}
+				<text x="42" y="28" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#c9d1d9">${escapeXml(label)}</text>
+			</g>
+		`;
+		currentX += width + 16;
+	}
+
+	let forksSvg = '';
+	if (props.forks) {
+		const label = `${props.forks} forks`;
+		const width = label.length * 11 + 50;
+		forksSvg = `
+			<g transform="translate(${currentX}, 490)">
+				<rect width="${width}" height="44" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1" />
+				${createForkIconSvg(14, 12, 20)}
+				<text x="42" y="28" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#c9d1d9">${escapeXml(label)}</text>
+			</g>
+		`;
+		currentX += width + 16;
+	}
+
+	const langWidth = language.length * 11 + 44;
+	const langSvg = `
+		<g transform="translate(${currentX}, 490)">
+			<rect width="${langWidth}" height="44" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1" />
+			<circle cx="20" cy="22" r="6" fill="#3178c6" />
+			<text x="34" y="28" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#c9d1d9">${escapeXml(language)}</text>
+		</g>
+	`;
+
+	return `
+		<rect width="1200" height="630" fill="#0d1117" />
+		${breadcrumbSvg}
+		${titleSvg}
+		${starsSvg}
+		${forksSvg}
+		${langSvg}
+	`;
 }

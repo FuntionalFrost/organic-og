@@ -1,8 +1,8 @@
-# ⚡ OG Engine — High-Performance OpenGraph & Social Banner Generator
+# ⚡ Organic-OG — High-Performance OpenGraph & Social Banner Generator
 
 A modern, edge-ready dynamic OpenGraph generator rebuilt from the ground up with **SvelteKit 2**, **Svelte 5 Runes**, and **`yaxa-svelte`**.
 
-Generates pixel-perfect social banners (1200×630) using **Satori** (HTML/CSS to SVG) and **Resvg** (Rust-based SVG to PNG rasterizer) with sub-10ms response times.
+Generates pixel-perfect social banners (1200×630) using **Native SVG Templates** and **Resvg** (Rust-based SVG to PNG rasterizer with Zero WASM) with sub-10ms response times.
 
 ---
 
@@ -34,7 +34,7 @@ Generates pixel-perfect social banners (1200×630) using **Satori** (HTML/CSS to
 | **Framework**           | SvelteKit 2 + Svelte 5 (Runes) + Vite 8                                                    |
 | **UI Components & SEO** | [`yaxa-svelte`](https://github.com) (Button, FormField, Select, Seo, Favicons, SiteConfig) |
 | **Styling**             | Tailwind CSS v4                                                                            |
-| **Image Generation**    | Satori 0.33 + @resvg/resvg-js 2.6                                                          |
+| **Image Generation**    | Native SVG Engine + @resvg/resvg-js 2.6 (Zero-WASM)                                        |
 | **Database & ORM**      | Turso (LibSQL SQLite) + Drizzle ORM                                                        |
 | **Authentication**      | Better-Auth + GitHub OAuth Provider                                                        |
 | **Monetization**        | Polar.sh SDK + StandardWebhooks                                                            |

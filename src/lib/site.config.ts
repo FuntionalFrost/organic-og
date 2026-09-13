@@ -4,7 +4,7 @@ export const siteConfig = defineSiteConfig({
 	name: 'Organic-OG',
 	title: 'Organic-OG — Instant Dynamic Social Cards & OpenGraph Images',
 	description:
-		'High-performance dynamic OpenGraph image generator built with SvelteKit, Satori, and Edge Functions. 5 responsive templates, HMAC URL signing, API key management, and real-time analytics.',
+		'High-performance dynamic OpenGraph image generator built with SvelteKit, Native SVG, and Rust-powered Resvg. 5 responsive templates, HMAC URL signing, API key management, and real-time analytics with Zero WASM.',
 	url: 'https://organic-og.netlify.app',
 	version: '1.2.0',
 	defaultLocale: 'en',
@@ -43,7 +43,8 @@ export const siteConfig = defineSiteConfig({
 			'OpenGraph generator',
 			'dynamic OG images',
 			'SvelteKit OG',
-			'Satori',
+			'Zero-WASM',
+			'Resvg',
 			'social cards',
 			'Twitter cards',
 			'meta tags generator',

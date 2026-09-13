@@ -3,11 +3,9 @@ import { env } from '$env/dynamic/private';
 import { and, eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { apiKeys, renderLogs, user } from '$lib/server/db/schema';
-import { getTemplateTree, type TemplateName, type TemplateProps } from '$lib/server/og';
-import { renderSatori } from '$lib/server/og/satori';
+import { getTemplateSvg, type TemplateName, type TemplateProps } from '$lib/server/og';
 import { renderSvgToPng } from '$lib/server/og/resvg';
 import { createCanonicalQueryString, sha256, verifyHmacSignature } from '$lib/server/og/security';
-import { getCachedFonts } from '$lib/server/og/fonts';
 import { fetchRemoteImageAsDataUri } from '$lib/server/og/imageFetcher';
 
 // In-memory LRU-style cache
@@ -135,30 +133,10 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			watermark: isWatermarked
 		};
 
-		const vnode = getTemplateTree(templateName, props);
-		const { fontBold, fontRegular } = await getCachedFonts();
+		// 4. Generate Native SVG Markup (Zero-WASM Architecture)
+		const svg = getTemplateSvg(templateName, props);
 
-		// 4. Render SVG via Satori
-		const svg = await renderSatori(vnode, {
-			width: 1200,
-			height: 630,
-			fonts: [
-				{
-					name: 'Inter',
-					data: fontBold,
-					weight: 700,
-					style: 'normal'
-				},
-				{
-					name: 'Inter',
-					data: fontRegular,
-					weight: 400,
-					style: 'normal'
-				}
-			]
-		});
-
-		// 5. Rasterize to PNG via Resvg
+		// 5. Rasterize to PNG via Resvg (Native Rust Engine)
 		const png = await renderSvgToPng(svg, 1200);
 
 		// Store in cache (limit memory size)

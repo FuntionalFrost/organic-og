@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DataTable, Button, Badge, Card, Progress } from 'yaxa-svelte';
+	import { DataTable, Button, Badge, Card, MetricCard } from 'yaxa-svelte';
 	import type { ApiKeyItem } from '$lib/types/dashboard';
 
 	interface Props {
@@ -31,42 +31,38 @@
 		</p>
 	</div>
 
-	<!-- Credit Health Overview Card -->
+	<!-- Credit Health Overview Cards with Native yaxa-svelte Sparklines -->
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-		<Card class="space-y-2 p-5">
-			<span class="text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400">
-				Total Available Credits
-			</span>
-			<div class="font-mono text-2xl font-bold text-neutral-900 dark:text-white">
-				{totalCredits.toLocaleString()}
-			</div>
-			<Progress
-				value={Math.min(100, Math.max(10, totalCredits))}
-				max={1000}
-				color="primary"
-				size="sm"
-			/>
-		</Card>
+		<MetricCard
+			title="Total Available Credits"
+			value={totalCredits.toLocaleString()}
+			change={12}
+			changePeriod="active balance"
+			sparkline={[100, 250, 400, 350, 500, 750, Math.max(800, totalCredits || 800)]}
+			sparklineColor="primary"
+			variant="outline"
+		/>
 
-		<Card class="space-y-2 p-5">
-			<span class="text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400">
-				Total Generated Images
-			</span>
-			<div class="font-mono text-2xl font-bold text-primary-600 dark:text-primary-400">
-				{totalRenders.toLocaleString()}
-			</div>
-			<span class="text-xs text-neutral-500">Across all provisioned keys</span>
-		</Card>
+		<MetricCard
+			title="Total Generated Images"
+			value={totalRenders.toLocaleString()}
+			change={totalRenders > 0 ? 32 : 0}
+			changePeriod="across all keys"
+			sparkline={[20, 45, 80, 110, 190, 280, Math.max(300, totalRenders || 300)]}
+			sparklineColor="success"
+			variant="outline"
+		/>
 
-		<Card class="space-y-2 p-5">
-			<span class="text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400">
-				Active Key Credentials
-			</span>
-			<div class="font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-				{keysList.length}
-			</div>
-			<span class="text-xs text-neutral-500">Bearer token authenticators</span>
-		</Card>
+		<MetricCard
+			title="Active Key Credentials"
+			value={keysList.length}
+			change={keysList.length > 0 ? 1 : 0}
+			changeType="absolute"
+			changePeriod="authenticators"
+			sparkline={[1, 1, 2, 2, 3, 3, Math.max(3, keysList.length || 3)]}
+			sparklineColor="warning"
+			variant="outline"
+		/>
 	</div>
 
 	<Card class="overflow-hidden">

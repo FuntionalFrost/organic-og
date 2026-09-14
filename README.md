@@ -29,15 +29,15 @@ Generates pixel-perfect social banners (1200×630) using **Native SVG Templates*
 
 ## 🛠️ Tech Stack
 
-| Layer                   | Technology                                                                                 |
-| ----------------------- | ------------------------------------------------------------------------------------------ |
-| **Framework**           | SvelteKit 2 + Svelte 5 (Runes) + Vite 8                                                    |
-| **UI Components & SEO** | [`yaxa-svelte`](https://github.com) (Button, FormField, Select, Seo, Favicons, SiteConfig) |
-| **Styling**             | Tailwind CSS v4                                                                            |
-| **Image Generation**    | Native SVG Engine + @resvg/resvg-js 2.6 (Zero-WASM)                                        |
-| **Database & ORM**      | Turso (LibSQL SQLite) + Drizzle ORM                                                        |
-| **Authentication**      | Better-Auth + GitHub OAuth Provider                                                        |
-| **Monetization**        | Polar.sh SDK + StandardWebhooks                                                            |
+| Layer                   | Technology                                                                                     |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| **Framework**           | SvelteKit 2 + Svelte 5 (Runes) + Vite 8                                                        |
+| **UI Components & SEO** | [`yaxa-svelte`](https://yaxa.vercel.app) (MetricCard, DataTable, LegalDocument, Seo, Favicons) |
+| **Styling**             | Tailwind CSS v4                                                                                |
+| **Image Generation**    | Native SVG Engine + @resvg/resvg-js 2.6 (Zero-WASM)                                            |
+| **Database & ORM**      | Turso (LibSQL SQLite) + Drizzle ORM                                                            |
+| **Authentication**      | Better-Auth + GitHub OAuth Provider                                                            |
+| **Monetization**        | Polar.sh SDK + StandardWebhooks                                                                |
 
 ---
 
@@ -45,8 +45,8 @@ Generates pixel-perfect social banners (1200×630) using **Native SVG Templates*
 
 ### 1. Prerequisites
 
-- Node.js `>= 20.x`
-- `pnpm` (v9 or v10)
+- Node.js `>= 24.x`
+- `pnpm` (v12.x)
 
 ### 2. Installation
 

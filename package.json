@@ -55,7 +55,7 @@
 		"@resvg/resvg-js": "^2.6.2",
 		"nanoid": "^6.0.1",
 		"standardwebhooks": "^1.1.1",
-		"yaxa-svelte": "^1.3.0",
+		"yaxa-svelte": "^1.4.0",
 		"zod": "^4.6.2"
 	}
 }

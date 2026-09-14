@@ -6,9 +6,18 @@ export const siteConfig = defineSiteConfig({
 	description:
 		'High-performance dynamic OpenGraph image generator built with SvelteKit, Native SVG, and Rust-powered Resvg. 5 responsive templates, HMAC URL signing, API key management, and real-time analytics with Zero WASM.',
 	url: 'https://organic-og.netlify.app',
-	version: '1.3.0',
+	version: '1.4.0',
 	defaultLocale: 'en',
 	logo: '/favicon.svg',
+	project: {
+		license: 'MIT',
+		licenseUrl: 'https://github.com/FuntionalFrost/organic-og/blob/main/LICENSE',
+		type: 'open-source',
+		pricingModel: 'freemium',
+		repositoryUrl: 'https://github.com/FuntionalFrost/organic-og',
+		isAccessibleForFree: true,
+		badge: 'MIT Open Source'
+	},
 	author: {
 		name: 'Organic-OG',
 		url: 'https://organic-og.netlify.app',

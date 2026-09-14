@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const ARTIFACTS_DIR =
 	'C:/Users/cvgov/.gemini/antigravity/brain/6351655e-390a-4050-9f21-54a190e3b434';
-const BASE_URL = process.env.TEST_URL || 'http://localhost:5175';
+const BASE_URL = process.env.TEST_URL || 'http://127.0.0.1:5173';
 
 async function runBrowserTest() {
 	console.log(`🌐 Launching Playwright Chromium for browser verification against ${BASE_URL}...\n`);

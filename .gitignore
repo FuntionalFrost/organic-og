@@ -25,3 +25,7 @@ vite.config.ts.timestamp-*
 test-results
 # SQLite
 *.db
+
+# AI
+/.gemini
+GEMINI.md

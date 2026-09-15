@@ -1,7 +1,10 @@
 import tailwindcss from '@tailwindcss/vite';
-import adapter from '@sveltejs/adapter-netlify';
+import adapterNetlify from '@sveltejs/adapter-netlify';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import adapterNode from '@sveltejs/adapter-node';
+
+const isNode = process.env.DEPLOY_TARGET === 'node';
 
 export default defineConfig({
 	plugins: [
@@ -12,7 +15,7 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter(),
+			adapter: isNode ? adapterNode() : adapterNetlify(),
 			typescript: {
 				config: (config) => {
 					config.include.push('../drizzle.config.ts');

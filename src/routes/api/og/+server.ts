@@ -9,7 +9,11 @@ import { createCanonicalQueryString, sha256, verifyHmacSignature } from '$lib/se
 import { fetchRemoteImageAsDataUri } from '$lib/server/og/imageFetcher';
 
 // In-memory LRU-style cache
-const memoryCache = new Map<string, Buffer>();
+interface CachedImage {
+	body: Uint8Array | string;
+	contentType: string;
+}
+const memoryCache = new Map<string, CachedImage>();
 
 export const GET: RequestHandler = async ({ url, request }) => {
 	try {
@@ -17,6 +21,8 @@ export const GET: RequestHandler = async ({ url, request }) => {
 		for (const [k, v] of url.searchParams.entries()) {
 			query[k] = v;
 		}
+
+		const format = (query.format as string)?.toLowerCase() === 'svg' ? 'svg' : 'png';
 
 		const secret =
 			env.OG_SIGNING_SECRET ||
@@ -72,10 +78,10 @@ export const GET: RequestHandler = async ({ url, request }) => {
 
 		// 2. Check Memory Cache
 		const canonical = createCanonicalQueryString(query);
-		const cacheKey = `img_${await sha256(canonical)}`;
+		const cacheKey = `img_${format}_${await sha256(canonical)}`;
 
 		if (memoryCache.has(cacheKey)) {
-			const cachedBuffer = memoryCache.get(cacheKey)!;
+			const cached = memoryCache.get(cacheKey)!;
 			try {
 				if (apiKeyRecord) {
 					await db
@@ -102,7 +108,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			}
 
 			const headers = new Headers({
-				'Content-Type': 'image/png',
+				'Content-Type': cached.contentType,
 				'x-cache': 'HIT',
 				'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
 				'Netlify-CDN-Cache-Control': 'public, max-age=604800, durable'
@@ -112,7 +118,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 				headers.set('x-credits-remaining', String(apiKeyRecord.creditsRemaining));
 			}
 
-			return new Response(new Uint8Array(cachedBuffer), { headers });
+			return new Response(cached.body as BodyInit, { headers });
 		}
 
 		// 3. Fetch Remote Logo & Virtual DOM Construction
@@ -136,15 +142,26 @@ export const GET: RequestHandler = async ({ url, request }) => {
 		// 4. Generate Native SVG Markup (Zero-WASM Architecture)
 		const svg = getTemplateSvg(templateName, props);
 
-		// 5. Rasterize to PNG via Resvg (Native Rust Engine)
-		const png = await renderSvgToPng(svg, 1200);
+		let responseBody: Uint8Array | string;
+		let responseContentType: string;
+
+		if (format === 'svg') {
+			// Fast-path: Direct SVG Vector Streaming (<1ms)
+			responseBody = svg;
+			responseContentType = 'image/svg+xml; charset=utf-8';
+		} else {
+			// Default: High-performance PNG Rasterization via Resvg
+			const png = await renderSvgToPng(svg, 1200);
+			responseBody = new Uint8Array(png);
+			responseContentType = 'image/png';
+		}
 
 		// Store in cache (limit memory size)
 		if (memoryCache.size > 500) {
 			const firstKey = memoryCache.keys().next().value;
 			if (firstKey) memoryCache.delete(firstKey);
 		}
-		memoryCache.set(cacheKey, png);
+		memoryCache.set(cacheKey, { body: responseBody, contentType: responseContentType });
 
 		// 6. Metering & Response Headers
 		let remainingCredits: number | null = null;
@@ -198,7 +215,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 		}
 
 		const responseHeaders = new Headers({
-			'Content-Type': 'image/png',
+			'Content-Type': responseContentType,
 			'x-cache': 'MISS',
 			'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
 			'Netlify-CDN-Cache-Control': 'public, max-age=604800, durable'
@@ -208,7 +225,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			responseHeaders.set('x-credits-remaining', String(remainingCredits));
 		}
 
-		return new Response(new Uint8Array(png), { headers: responseHeaders });
+		return new Response(responseBody as BodyInit, { headers: responseHeaders });
 	} catch (err: unknown) {
 		console.error('OG Render Pipeline Error:', err);
 		if (err && typeof err === 'object' && 'status' in err) throw err;

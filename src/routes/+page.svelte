@@ -94,6 +94,7 @@
 		logoUrl: 'https://avatars.githubusercontent.com/u/28706372?v=4',
 		theme: 'brand',
 		template: 'saas',
+		format: 'png',
 		price: '€129.00',
 		rating: '4.9 ★★★★★',
 		stars: '14.2k',

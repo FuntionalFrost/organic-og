@@ -160,8 +160,24 @@ async function runBrowserTest() {
 		});
 		console.log('  📸 Captured screenshot: browser_legal_privacy.png');
 
-		// 7. Test Site Utilities & SEO
-		console.log('\n📍 7. Testing Site Utilities & SEO routes...');
+		// 7. Test Dual-Mode Rendering (PNG & SVG)
+		console.log('\n📍 7. Testing Dual-Mode Rendering Endpoints...');
+		const pngRes = await page.request.get(
+			`${BASE_URL}/api/og?template=saas&format=png&title=DualMode+Test`
+		);
+		console.log(
+			`  ✅ GET /api/og?format=png — Status: ${pngRes.status()} Content-Type: ${pngRes.headers()['content-type']}`
+		);
+
+		const svgRes = await page.request.get(
+			`${BASE_URL}/api/og?template=saas&format=svg&title=DualMode+Test`
+		);
+		console.log(
+			`  ✅ GET /api/og?format=svg — Status: ${svgRes.status()} Content-Type: ${svgRes.headers()['content-type']}`
+		);
+
+		// 8. Test Site Utilities & SEO
+		console.log('\n📍 8. Testing Site Utilities & SEO routes...');
 		const utils = ['/robots.txt', '/sitemap.xml', '/sitemap.xsl', '/site.webmanifest'];
 		for (const u of utils) {
 			const res = await page.goto(`${BASE_URL}${u}`);

@@ -61,6 +61,12 @@
 		toast.success('Copied Signed Meta Tag to Clipboard');
 	}
 
+	function copyMarkdownTag() {
+		const tag = `![${studioState.title || 'OpenGraph Card'}](${baseUrl}${signedPreviewUrl})`;
+		clipboard.copy(tag);
+		toast.success('Copied Markdown Embed Tag to Clipboard');
+	}
+
 	function copyImageUrl() {
 		clipboard.copy(`${baseUrl}${signedPreviewUrl}`);
 		toast.success('Copied Image URL to Clipboard');
@@ -83,12 +89,22 @@
 			{/if}
 		</div>
 
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
 			<FormField label="Layout Template">
 				<Select bind:value={studioState.template} options={templateOptions} class="w-full" />
 			</FormField>
 			<FormField label="Theme Style">
 				<Select bind:value={studioState.theme} options={themeOptions} class="w-full" />
+			</FormField>
+			<FormField label="Output Format">
+				<Select
+					bind:value={studioState.format}
+					options={[
+						{ label: 'PNG (Social)', value: 'png' },
+						{ label: 'SVG (Vector)', value: 'svg' }
+					]}
+					class="w-full"
+				/>
 			</FormField>
 		</div>
 
@@ -443,19 +459,24 @@
 				<span
 					class="font-mono text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400"
 				>
-					Signed Embed Code
+					Signed Embed Code ({studioState.format === 'svg' ? 'SVG Vector' : 'PNG Social'})
 				</span>
 				<div class="flex items-center gap-2">
 					<Button color="neutral" variant="soft" size="xs" onclick={copyImageUrl}>Copy URL</Button>
-					<Button color="primary" variant="solid" size="xs" onclick={copyMetaTag}>
-						Copy Meta Tag
-					</Button>
+					<Button color="neutral" variant="soft" size="xs" onclick={copyMarkdownTag}
+						>Markdown</Button
+					>
+					<Button color="primary" variant="solid" size="xs" onclick={copyMetaTag}>Meta Tag</Button>
 				</div>
 			</div>
 			<div
 				class="rounded-md bg-neutral-100 p-3 font-mono text-xs break-all text-primary-600 select-all dark:bg-neutral-950 dark:text-primary-400"
 			>
-				&lt;meta property="og:image" content="{baseUrl}{signedPreviewUrl}" /&gt;
+				{#if studioState.format === 'svg'}
+					![{studioState.title || 'OpenGraph Card'}]({baseUrl}{signedPreviewUrl})
+				{:else}
+					&lt;meta property="og:image" content="{baseUrl}{signedPreviewUrl}" /&gt;
+				{/if}
 			</div>
 		</Card>
 	</div>

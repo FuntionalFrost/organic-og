@@ -8,6 +8,10 @@ export function getActiveParams(state: StudioState): Record<string, string> {
 		title: state.title
 	};
 
+	if (state.format && state.format === 'svg') {
+		params.format = 'svg';
+	}
+
 	if (state.template === 'minimal') {
 		if (state.description) params.description = state.description;
 		return params;
@@ -43,9 +47,10 @@ export function getActiveParams(state: StudioState): Record<string, string> {
 export function generateCurlSnippet(state: StudioState, apiKey: string, baseUrl: string): string {
 	const params = getActiveParams(state);
 	const queryString = new URLSearchParams(params).toString();
+	const outputFile = state.format === 'svg' ? 'og-image.svg' : 'og-image.png';
 	return `curl -X GET "${baseUrl}/api/og?${queryString}" \\
   -H "Authorization: Bearer ${apiKey}" \\
-  --output og-image.png`;
+  --output ${outputFile}`;
 }
 
 export function generateTypeScriptSnippet(
@@ -54,6 +59,7 @@ export function generateTypeScriptSnippet(
 	baseUrl: string
 ): string {
 	const params = getActiveParams(state);
+	const outputFile = state.format === 'svg' ? 'og-card.svg' : 'og-card.png';
 	return `import fs from 'node:fs';
 
 const response = await fetch("${baseUrl}/api/og?${new URLSearchParams(params).toString()}", {
@@ -63,12 +69,13 @@ const response = await fetch("${baseUrl}/api/og?${new URLSearchParams(params).to
 });
 
 const buffer = await response.arrayBuffer();
-fs.writeFileSync('og-card.png', Buffer.from(buffer));`;
+fs.writeFileSync('${outputFile}', Buffer.from(buffer));`;
 }
 
 export function generatePythonSnippet(state: StudioState, apiKey: string, baseUrl: string): string {
 	const params = getActiveParams(state);
 	const formattedParams = JSON.stringify(params, null, 4).replace(/^/gm, '    ').trimStart();
+	const outputFile = state.format === 'svg' ? 'og_image.svg' : 'og_image.png';
 
 	return `import requests
 
@@ -77,7 +84,7 @@ params = ${formattedParams}
 headers = {"Authorization": "Bearer ${apiKey}"}
 
 res = requests.get(url, params=params, headers=headers)
-with open("og_image.png", "wb") as f:
+with open("${outputFile}", "wb") as f:
     f.write(res.content)`;
 }
 
@@ -90,4 +97,12 @@ export function generateSvelteKitSnippet(signedPreviewUrl: string, baseUrl: stri
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="${baseUrl}${signedPreviewUrl}" />
 </svelte:head>`;
+}
+
+export function generateMarkdownSnippet(
+	signedPreviewUrl: string,
+	baseUrl: string,
+	title = 'OpenGraph Card'
+): string {
+	return `![${title}](${baseUrl}${signedPreviewUrl})`;
 }

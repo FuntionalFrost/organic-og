@@ -23,7 +23,6 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@libsql/client": "^0.18.0",
 		"@playwright/test": "^1.60.0",
 		"@sveltejs/adapter-netlify": "^6.0.4",
 		"@sveltejs/adapter-node": "^5.5.7",
@@ -52,6 +51,7 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"@libsql/client": "^0.18.0",
 		"@lucide/svelte": "^1.46.0",
 		"@resvg/resvg-js": "^2.6.2",
 		"nanoid": "^6.0.1",

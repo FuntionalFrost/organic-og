@@ -11,6 +11,7 @@ export interface StudioState {
 	logoUrl: string;
 	theme: ThemeType;
 	template: TemplateType;
+	format?: 'png' | 'svg';
 	price: string;
 	rating: string;
 	stars: string;

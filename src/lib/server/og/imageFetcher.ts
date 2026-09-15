@@ -58,7 +58,12 @@ export async function fetchRemoteImageAsDataUri(url: string | undefined): Promis
 		if (!contentType || !ALLOWED_MIME_TYPES.has(contentType)) return null;
 
 		const arrayBuffer = await response.arrayBuffer();
-		const base64 = Buffer.from(arrayBuffer).toString('base64');
+		const bytes = new Uint8Array(arrayBuffer);
+		let binary = '';
+		for (let i = 0; i < bytes.length; i++) {
+			binary += String.fromCharCode(bytes[i]);
+		}
+		const base64 = btoa(binary);
 		const dataUri = `data:${contentType};base64,${base64}`;
 
 		// Store in short-lived in-memory cache (limit cache size)

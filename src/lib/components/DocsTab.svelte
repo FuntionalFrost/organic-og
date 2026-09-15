@@ -5,7 +5,8 @@
 		generateCurlSnippet,
 		generateTypeScriptSnippet,
 		generatePythonSnippet,
-		generateSvelteKitSnippet
+		generateSvelteKitSnippet,
+		generateMarkdownSnippet
 	} from '$lib/utils/snippets';
 
 	interface Props {
@@ -17,7 +18,7 @@
 
 	let { studioState, apiKeyPrefix, signedPreviewUrl, baseUrl }: Props = $props();
 
-	let docLanguage = $state<'curl' | 'typescript' | 'python' | 'svelte'>('curl');
+	let docLanguage = $state<'curl' | 'typescript' | 'python' | 'svelte' | 'markdown'>('curl');
 	const clipboard = useClipboard();
 
 	let generatedCode = $derived.by(() => {
@@ -30,6 +31,8 @@
 				return generatePythonSnippet(studioState, apiKeyPrefix, baseUrl);
 			case 'svelte':
 				return generateSvelteKitSnippet(signedPreviewUrl, baseUrl);
+			case 'markdown':
+				return generateMarkdownSnippet(signedPreviewUrl, baseUrl, studioState.title);
 			default:
 				return '';
 		}
@@ -41,6 +44,12 @@
 			type: 'string',
 			default: 'saas',
 			desc: 'Layout type: saas, blog, ecommerce, github, minimal'
+		},
+		{
+			param: 'format',
+			type: 'string',
+			default: 'png',
+			desc: 'Output format: png (raster bitmap for social cards) or svg (vector streaming for web/README)'
 		},
 		{
 			param: 'title',
@@ -132,6 +141,14 @@
 					onclick={() => (docLanguage = 'svelte')}
 				>
 					SvelteKit / HTML
+				</Button>
+				<Button
+					variant={docLanguage === 'markdown' ? 'solid' : 'outline'}
+					color="primary"
+					size="xs"
+					onclick={() => (docLanguage = 'markdown')}
+				>
+					Markdown (README)
 				</Button>
 			</ButtonGroup>
 		</div>

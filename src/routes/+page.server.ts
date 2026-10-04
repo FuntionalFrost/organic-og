@@ -8,7 +8,10 @@ import { createCanonicalQueryString, generateHmacSignature } from '$lib/server/o
 import { siteConfig } from '$lib/site.config';
 
 export const load: PageServerLoad = async ({ url }) => {
-	const baseUrl = (env.PUBLIC_BASE_URL || env.ORIGIN || url.origin).replace(/\/+$/, '');
+	const baseUrl = (env.ORIGIN || env.PUBLIC_APP_URL || env.PUBLIC_BASE_URL || url.origin).replace(
+		/\/+$/,
+		''
+	);
 
 	// 1. Compute default root signed OG URL
 	const defaultOgParams = {

@@ -1,19 +1,19 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { and, eq, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { apiKeys, renderLogs, user } from '$lib/server/db/schema';
-import { getTemplateSvg, type TemplateName, type TemplateProps } from '$lib/server/og';
+import { apiKeys, renderLogs } from '$lib/server/db/schema';
+import {
+	getTemplateSvg,
+	type TemplateName,
+	type TemplateProps,
+	type PatternType,
+	type FontType
+} from '$lib/server/og';
 import { renderSvgToPng } from '$lib/server/og/resvg';
 import { createCanonicalQueryString, sha256, verifyHmacSignature } from '$lib/server/og/security';
 import { fetchRemoteImageAsDataUri } from '$lib/server/og/imageFetcher';
-
-// In-memory LRU-style cache
-interface CachedImage {
-	body: Uint8Array | string;
-	contentType: string;
-}
-const memoryCache = new Map<string, CachedImage>();
+import { getCachedImage, setCachedImage } from '$lib/server/og/cache';
 
 export const GET: RequestHandler = async ({ url, request }) => {
 	try {
@@ -32,8 +32,8 @@ export const GET: RequestHandler = async ({ url, request }) => {
 		// 1. Authenticate Request
 		const authHeader = request.headers.get('authorization');
 		let apiKeyRecord: typeof apiKeys.$inferSelect | null = null;
-		let userRecord: typeof user.$inferSelect | null = null;
-		let isWatermarked = false;
+		// In FOSS edition, clean renders are default; watermarking is opt-in only
+		const isWatermarked = query.watermark === '1';
 
 		if (authHeader?.startsWith('Bearer ')) {
 			const rawKey = authHeader.replace('Bearer ', '').trim();
@@ -45,17 +45,6 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			if (!apiKeyRecord || !apiKeyRecord.isActive) {
 				throw error(401, 'Invalid or inactive API key.');
 			}
-
-			// Check owner user credit balance
-			if (apiKeyRecord.userId) {
-				const users = await db.select().from(user).where(eq(user.id, apiKeyRecord.userId)).limit(1);
-				userRecord = users[0] || null;
-			}
-
-			const availableCredits = userRecord?.creditsRemaining ?? apiKeyRecord.creditsRemaining;
-			if (availableCredits <= 0) {
-				throw error(402, 'Credit limit reached. Please purchase more credits.');
-			}
 		} else if (query.s) {
 			if (!secret) {
 				throw error(500, 'OG Signing Secret is not configured.');
@@ -65,23 +54,16 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			if (!isValid) {
 				throw error(401, 'Invalid HMAC signature.');
 			}
-
-			if (query.demo === '1' || query.preview === '1') {
-				isWatermarked = true;
-			}
-		} else {
-			// Public social crawlers and preview demo fallback
-			isWatermarked = true;
 		}
 
 		const templateName = ((query.template as string) || 'saas') as TemplateName;
 
-		// 2. Check Memory Cache
+		// 2. Check Hybrid Edge Cache
 		const canonical = createCanonicalQueryString(query);
 		const cacheKey = `img_${format}_${await sha256(canonical)}`;
 
-		if (memoryCache.has(cacheKey)) {
-			const cached = memoryCache.get(cacheKey)!;
+		const cached = await getCachedImage(cacheKey);
+		if (cached) {
 			try {
 				if (apiKeyRecord) {
 					await db
@@ -111,18 +93,18 @@ export const GET: RequestHandler = async ({ url, request }) => {
 				'Content-Type': cached.contentType,
 				'x-cache': 'HIT',
 				'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
-				'Netlify-CDN-Cache-Control': 'public, max-age=604800, durable'
+				'CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
+				'Vercel-CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
+				'x-engine': 'organic-og-foss'
 			});
-
-			if (apiKeyRecord) {
-				headers.set('x-credits-remaining', String(apiKeyRecord.creditsRemaining));
-			}
 
 			return new Response(cached.body as BodyInit, { headers });
 		}
 
-		// 3. Fetch Remote Logo & Virtual DOM Construction
-		const logoDataUri = await fetchRemoteImageAsDataUri(query.logoUrl as string | undefined);
+		// 3. Fetch Remote Logo/Avatar & Virtual DOM Construction
+		const logoDataUri = await fetchRemoteImageAsDataUri(
+			(query.logoUrl as string | undefined) || (query.avatarUrl as string | undefined)
+		);
 
 		const props: TemplateProps = {
 			title: ((query.title as string) || 'Organic-OG').slice(0, 200),
@@ -130,12 +112,34 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			badge: ((query.badge as string) || '').slice(0, 60),
 			siteName: ((query.siteName as string) || '').slice(0, 80),
 			theme: (query.theme as TemplateProps['theme']) || 'dark',
+			pattern: (query.pattern as PatternType) || 'none',
+			font: (query.font as FontType) || 'inter',
+			customBg: query.bg as string | undefined,
+			customAccent: query.accent as string | undefined,
+			customTextColor: query.textColor as string | undefined,
 			logoDataUri,
+			// Ecommerce & GitHub
 			price: ((query.price as string) || '').slice(0, 30),
 			rating: ((query.rating as string) || '').slice(0, 30),
 			stars: query.stars ? String(query.stars).slice(0, 20) : undefined,
 			forks: query.forks ? String(query.forks).slice(0, 20) : undefined,
 			language: ((query.language as string) || 'TypeScript').slice(0, 30),
+			// Podcast
+			episode: ((query.episode as string) || '').slice(0, 40),
+			host: ((query.host as string) || '').slice(0, 60),
+			guest: ((query.guest as string) || '').slice(0, 60),
+			duration: ((query.duration as string) || '').slice(0, 30),
+			// Event
+			eventDate: ((query.eventDate as string) || '').slice(0, 60),
+			location: ((query.location as string) || '').slice(0, 80),
+			speaker: ((query.speaker as string) || '').slice(0, 80),
+			// Quote
+			author: ((query.author as string) || '').slice(0, 60),
+			handle: ((query.handle as string) || '').slice(0, 40),
+			role: ((query.role as string) || '').slice(0, 80),
+			// Changelog
+			version: ((query.version as string) || '').slice(0, 40),
+			items: ((query.items as string) || '').slice(0, 300),
 			watermark: isWatermarked
 		};
 
@@ -156,40 +160,15 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			responseContentType = 'image/png';
 		}
 
-		// Store in cache (limit memory size)
-		if (memoryCache.size > 500) {
-			const firstKey = memoryCache.keys().next().value;
-			if (firstKey) memoryCache.delete(firstKey);
-		}
-		memoryCache.set(cacheKey, { body: responseBody, contentType: responseContentType });
+		// Store in dual-tier cache
+		await setCachedImage(cacheKey, { body: responseBody, contentType: responseContentType });
 
-		// 6. Metering & Response Headers
-		let remainingCredits: number | null = null;
+		// 6. Telemetry & Response Headers
 		try {
 			if (apiKeyRecord) {
-				let remaining = apiKeyRecord.creditsRemaining - 1;
-				if (apiKeyRecord.userId) {
-					await db
-						.update(user)
-						.set({
-							creditsRemaining: sql`${user.creditsRemaining} - 1`
-						})
-						.where(and(eq(user.id, apiKeyRecord.userId), sql`${user.creditsRemaining} > 0`));
-
-					const [updatedUser] = await db
-						.select({ creditsRemaining: user.creditsRemaining })
-						.from(user)
-						.where(eq(user.id, apiKeyRecord.userId));
-
-					if (updatedUser) {
-						remaining = updatedUser.creditsRemaining;
-					}
-				}
-
 				await db
 					.update(apiKeys)
 					.set({
-						creditsRemaining: remaining,
 						totalRenders: sql`${apiKeys.totalRenders} + 1`
 					})
 					.where(eq(apiKeys.id, apiKeyRecord.id));
@@ -200,8 +179,6 @@ export const GET: RequestHandler = async ({ url, request }) => {
 					template: templateName,
 					isCacheHit: false
 				});
-
-				remainingCredits = remaining;
 			} else {
 				await db.insert(renderLogs).values({
 					id: crypto.randomUUID(),
@@ -211,19 +188,17 @@ export const GET: RequestHandler = async ({ url, request }) => {
 				});
 			}
 		} catch (dbErr) {
-			console.warn('Database metering/telemetry log notice (cache miss):', dbErr);
+			console.warn('Database telemetry log notice (cache miss):', dbErr);
 		}
 
 		const responseHeaders = new Headers({
 			'Content-Type': responseContentType,
 			'x-cache': 'MISS',
+			'x-engine': 'organic-og-foss',
 			'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
-			'Netlify-CDN-Cache-Control': 'public, max-age=604800, durable'
+			'CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
+			'Vercel-CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400'
 		});
-
-		if (remainingCredits !== null) {
-			responseHeaders.set('x-credits-remaining', String(remainingCredits));
-		}
 
 		return new Response(responseBody as BodyInit, { headers: responseHeaders });
 	} catch (err: unknown) {

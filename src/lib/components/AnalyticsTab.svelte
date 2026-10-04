@@ -76,18 +76,18 @@
 		/>
 
 		<MetricCard
-			title="Credits Sold"
-			value={(analyticsData?.metrics.creditsPurchased ?? 0).toLocaleString()}
+			title="Cache Hits"
+			value={(analyticsData?.metrics.cacheHits ?? 0).toLocaleString()}
 			change={18}
-			changePeriod="via Polar MoR"
+			changePeriod="bandwidth saved"
 			sparkline={[
-				100,
-				250,
-				400,
-				600,
-				850,
-				1200,
-				Math.max(1200, analyticsData?.metrics.creditsPurchased || 1500)
+				20,
+				45,
+				70,
+				110,
+				160,
+				220,
+				Math.max(250, analyticsData?.metrics.cacheHits || 250)
 			]}
 			sparklineColor="primary"
 			variant="outline"
@@ -95,10 +95,12 @@
 	</div>
 
 	<!-- Template Breakdown Grid -->
-	<Card class="space-y-4 p-6">
+	<Card
+		class="space-y-4 border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
+	>
 		<div class="flex items-center justify-between">
 			<h3
-				class="text-sm font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+				class="text-sm font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 			>
 				Template Usage Distribution
 			</h3>
@@ -109,10 +111,13 @@
 
 		<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
 			{#each analyticsData?.templateBreakdown || [] as item (item.template)}
-				<Card variant="subtle" class="flex flex-col justify-between p-4">
+				<Card
+					variant="subtle"
+					class="flex flex-col justify-between border border-neutral-200 bg-neutral-50 p-4 shadow-2xs dark:border-neutral-800/80 dark:bg-[#0c0c0e]"
+				>
 					<div class="flex items-center justify-between">
 						<span
-							class="font-mono text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400"
+							class="font-mono text-xs font-semibold text-neutral-600 uppercase dark:text-neutral-400"
 						>
 							{item.template}
 						</span>
@@ -140,11 +145,13 @@
 	<!-- Live Audit / Render Logs Table -->
 	<div class="space-y-3">
 		<h3
-			class="text-sm font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+			class="text-sm font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 		>
 			Recent Render Activity (Last 15)
 		</h3>
-		<Card class="overflow-hidden p-0">
+		<Card
+			class="overflow-hidden border border-neutral-200 bg-white p-0 shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
+		>
 			<DataTable
 				data={analyticsData?.recentLogs || []}
 				columns={logColumns}
@@ -152,7 +159,7 @@
 			>
 				{#snippet cell(item, col)}
 					{#if col.key === 'createdAt'}
-						<span class="font-mono text-xs text-neutral-500 dark:text-neutral-400">
+						<span class="font-mono text-xs text-neutral-600 dark:text-neutral-400">
 							{item.createdAt}
 						</span>
 					{:else if col.key === 'keyName'}

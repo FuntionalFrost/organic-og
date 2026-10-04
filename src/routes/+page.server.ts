@@ -1,14 +1,13 @@
 import type { PageServerLoad } from './$types';
-import { and, desc, eq, inArray, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { env } from '$env/dynamic/private';
 import { definePageSeo, generateOrganizationSchema, generateWebSiteSchema } from 'yaxa-svelte';
 import { db } from '$lib/server/db';
-import { apiKeys, purchases, renderLogs, user } from '$lib/server/db/schema';
+import { apiKeys, renderLogs } from '$lib/server/db/schema';
 import { createCanonicalQueryString, generateHmacSignature } from '$lib/server/og/security';
 import { siteConfig } from '$lib/site.config';
 
-export const load: PageServerLoad = async ({ locals, url }) => {
-	const currentUser = locals.user;
+export const load: PageServerLoad = async ({ url }) => {
 	const baseUrl = (env.PUBLIC_BASE_URL || env.ORIGIN || url.origin).replace(/\/+$/, '');
 
 	// 1. Compute default root signed OG URL
@@ -16,7 +15,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		badge: 'v1.0 Live',
 		description:
 			'High-performance OpenGraph image generator built with SvelteKit, Native SVG, and Edge Functions.',
-		siteName: 'organic-og.netlify.app',
+		siteName: 'organic-og.vercel.app',
 		template: 'saas',
 		theme: 'brand',
 		title: 'Organic-OG — Automated Social Cards at the Edge'
@@ -46,25 +45,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		schema: [generateOrganizationSchema(siteConfig), generateWebSiteSchema(siteConfig)]
 	});
 
-	if (!currentUser) {
-		return {
-			user: null,
-			keys: [],
-			analytics: null,
-			defaultOgUrl,
-			baseUrl,
-			seo
-		};
-	}
-
-	// 3. Fetch user's credits and keys
-	const [userRow] = await db
-		.select({ creditsRemaining: user.creditsRemaining })
-		.from(user)
-		.where(eq(user.id, currentUser.id));
-
-	const userCredits = userRow?.creditsRemaining ?? 10;
-
+	// 3. Fetch API keys
 	const keysList = await db
 		.select({
 			id: apiKeys.id,
@@ -76,104 +57,57 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			createdAt: apiKeys.createdAt
 		})
 		.from(apiKeys)
-		.where(eq(apiKeys.userId, currentUser.id))
 		.orderBy(desc(apiKeys.createdAt));
 
-	const formattedKeys = keysList.map((k) => ({
-		...k,
-		creditsRemaining: userCredits
-	}));
-
 	// 4. Fetch analytics telemetry
-	const keyIds = keysList.map((k) => k.id);
+	const [activeKeysCount] = await db.select({ count: sql<number>`count(*)` }).from(apiKeys);
 
-	const [activeKeysCount] = await db
+	const [totalLogsCount] = await db.select({ count: sql<number>`count(*)` }).from(renderLogs);
+
+	const [cacheHitsCount] = await db
 		.select({ count: sql<number>`count(*)` })
-		.from(apiKeys)
-		.where(eq(apiKeys.userId, currentUser.id));
+		.from(renderLogs)
+		.where(eq(renderLogs.isCacheHit, true));
 
-	const [creditsPurchased] = await db
-		.select({ total: sql<number>`coalesce(sum(${purchases.creditsAdded}), 0)` })
-		.from(purchases)
-		.where(eq(purchases.userId, currentUser.id));
+	const templateBreakdown = await db
+		.select({
+			template: renderLogs.template,
+			count: sql<number>`count(*)`
+		})
+		.from(renderLogs)
+		.groupBy(renderLogs.template);
 
-	let analyticsData = {
+	const recentLogs = await db
+		.select({
+			id: renderLogs.id,
+			template: renderLogs.template,
+			isCacheHit: renderLogs.isCacheHit,
+			createdAt: renderLogs.createdAt,
+			keyName: apiKeys.name,
+			keyPrefix: apiKeys.prefix
+		})
+		.from(renderLogs)
+		.leftJoin(apiKeys, eq(renderLogs.apiKeyId, apiKeys.id))
+		.orderBy(desc(renderLogs.createdAt))
+		.limit(15);
+
+	const totalRenders = totalLogsCount?.count || 0;
+	const cacheHits = cacheHitsCount?.count || 0;
+	const cacheHitRate = totalRenders > 0 ? Math.round((cacheHits / totalRenders) * 100) : 0;
+
+	const analyticsData = {
 		metrics: {
-			totalRenders: 0,
-			cacheHits: 0,
-			cacheHitRate: 0,
-			activeKeys: activeKeysCount?.count || 0,
-			creditsPurchased: creditsPurchased?.total || 0
+			totalRenders,
+			cacheHits,
+			cacheHitRate,
+			activeKeys: activeKeysCount?.count || 0
 		},
-		templateBreakdown: [] as Array<{ template: string; count: number }>,
-		recentLogs: [] as Array<{
-			id: string;
-			template: string;
-			isCacheHit: boolean;
-			createdAt: string | null;
-			keyName: string | null;
-			keyPrefix: string | null;
-		}>
+		templateBreakdown,
+		recentLogs
 	};
 
-	if (keyIds.length > 0) {
-		const [totalLogsCount] = await db
-			.select({ count: sql<number>`count(*)` })
-			.from(renderLogs)
-			.where(inArray(renderLogs.apiKeyId, keyIds));
-
-		const [cacheHitsCount] = await db
-			.select({ count: sql<number>`count(*)` })
-			.from(renderLogs)
-			.where(and(eq(renderLogs.isCacheHit, true), inArray(renderLogs.apiKeyId, keyIds)));
-
-		const templateBreakdown = await db
-			.select({
-				template: renderLogs.template,
-				count: sql<number>`count(*)`
-			})
-			.from(renderLogs)
-			.where(inArray(renderLogs.apiKeyId, keyIds))
-			.groupBy(renderLogs.template);
-
-		const recentLogs = await db
-			.select({
-				id: renderLogs.id,
-				template: renderLogs.template,
-				isCacheHit: renderLogs.isCacheHit,
-				createdAt: renderLogs.createdAt,
-				keyName: apiKeys.name,
-				keyPrefix: apiKeys.prefix
-			})
-			.from(renderLogs)
-			.innerJoin(apiKeys, eq(renderLogs.apiKeyId, apiKeys.id))
-			.where(eq(apiKeys.userId, currentUser.id))
-			.orderBy(desc(renderLogs.createdAt))
-			.limit(15);
-
-		const totalRenders = totalLogsCount?.count || 0;
-		const cacheHits = cacheHitsCount?.count || 0;
-		const cacheHitRate = totalRenders > 0 ? Math.round((cacheHits / totalRenders) * 100) : 0;
-
-		analyticsData = {
-			metrics: {
-				totalRenders,
-				cacheHits,
-				cacheHitRate,
-				activeKeys: activeKeysCount?.count || 0,
-				creditsPurchased: creditsPurchased?.total || 0
-			},
-			templateBreakdown,
-			recentLogs
-		};
-	}
-
 	return {
-		user: {
-			...currentUser,
-			creditsRemaining: userCredits
-		},
-		keys: formattedKeys,
+		keys: keysList,
 		analytics: analyticsData,
 		defaultOgUrl,
 		baseUrl,

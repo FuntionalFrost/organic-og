@@ -4,37 +4,34 @@ export const siteConfig = defineSiteConfig({
 	name: 'Organic-OG',
 	title: 'Organic-OG — Instant Dynamic Social Cards & OpenGraph Images',
 	description:
-		'High-performance dynamic OpenGraph image generator built with SvelteKit, Native SVG, and Rust-powered Resvg. 5 responsive templates, HMAC URL signing, API key management, and real-time analytics with Zero WASM.',
-	url: 'https://organic-og.netlify.app',
-	version: '1.4.0',
+		'High-performance dynamic OpenGraph image generator built with SvelteKit, Native SVG, and Rust-powered Resvg. 9 responsive templates, HMAC URL signing, API key management, and real-time analytics with Zero WASM. 100% Free & Open Source.',
+	url: 'https://organic-og.vercel.app',
+	version: '2.0.0',
 	defaultLocale: 'en',
 	logo: '/favicon.svg',
 	project: {
 		license: 'MIT',
 		licenseUrl: 'https://github.com/FuntionalFrost/organic-og/blob/main/LICENSE',
 		type: 'open-source',
-		pricingModel: 'freemium',
+		pricingModel: 'free',
 		repositoryUrl: 'https://github.com/FuntionalFrost/organic-og',
 		isAccessibleForFree: true,
 		badge: 'MIT Open Source'
 	},
 	author: {
-		name: 'Organic-OG',
-		url: 'https://organic-og.netlify.app',
+		name: 'Organic-OG Contributors',
+		url: 'https://organic-og.vercel.app',
 		github: 'https://github.com/FuntionalFrost'
 	},
 	company: {
-		legalName: 'Organic-OG',
+		legalName: 'Organic-OG FOSS Project',
 		contactEmail: 'devfrost@protonmail.com'
 	},
 	legal: {
-		paymentProcessor: 'polar',
-		refundDays: 14,
 		dpoEmail: 'devfrost@protonmail.com',
 		links: {
 			privacy: '/privacy',
 			terms: '/terms',
-			refunds: '/refunds',
 			impressum: '/impressum'
 		}
 	},
@@ -72,14 +69,7 @@ export const siteConfig = defineSiteConfig({
 	sitemap: {
 		changefreq: 'daily',
 		priority: 1.0,
-		exclude: [
-			'/api/keys/*',
-			'/api/checkout/*',
-			'/api/sign',
-			'/api/analytics',
-			'/api/webhooks/*',
-			'/api/auth/*'
-		]
+		exclude: ['/api/keys/*', '/api/sign', '/api/analytics']
 	},
 	robots: {
 		rules: [
@@ -89,21 +79,13 @@ export const siteConfig = defineSiteConfig({
 					'/',
 					'/privacy',
 					'/terms',
-					'/refunds',
 					'/impressum',
 					'/api/og',
 					'/sitemap.xml',
 					'/sitemap.xsl',
 					'/site.webmanifest'
 				],
-				disallow: [
-					'/api/keys',
-					'/api/checkout',
-					'/api/sign',
-					'/api/analytics',
-					'/api/webhooks',
-					'/api/auth'
-				]
+				disallow: ['/api/keys', '/api/sign', '/api/analytics']
 			}
 		]
 	},

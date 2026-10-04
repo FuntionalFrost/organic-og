@@ -1,9 +1,99 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../node_modules/yaxa-svelte';
 @import 'yaxa-svelte/yaxa.css';
-@plugin '@tailwindcss/typography';
 
 @theme {
 	--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Ensure ultra-high contrast dark theme token defaults */
+:root {
+	--yaxa-bg: #ffffff;
+	--yaxa-fg: #0f172a;
+	--yaxa-muted: #64748b;
+	--yaxa-border: #e2e8f0;
+	--yaxa-card-bg: #ffffff;
+}
+
+.dark {
+	--yaxa-bg: #09090b;
+	--yaxa-fg: #f8fafc;
+	--yaxa-muted: #94a3b8;
+	--yaxa-border: #27272a;
+	--yaxa-card-bg: #121215;
+}
+
+/* Deep contrast for Card primitives in dark mode */
+.dark [data-yaxa-card],
+.dark .rounded-xl:has(> .border-b),
+.dark div.rounded-xl.border {
+	background-color: var(--yaxa-card-bg);
+	border-color: #27272a;
+	color: #f8fafc;
+}
+
+/* Ensure MetricCard and KPI values match the site's dark mode text-white standard */
+.dark .text-2xl.tracking-tight,
+.dark .rounded-xl .text-2xl.font-bold,
+.dark [data-yaxa-card] .text-2xl.font-bold {
+	color: #ffffff !important;
+}
+
+/* High-contrast Form Labels and Text */
+.dark label {
+	color: #e2e8f0 !important;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+	background-color: #0c0c0e !important;
+	border-color: #27272a !important;
+	color: #f8fafc !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+	color: #71717a !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+	border-color: #f97316 !important;
+	outline: none;
+}
+
+/* Dark mode table & table header styling */
+.dark table thead {
+	background-color: #121215 !important;
+	border-color: #27272a !important;
+}
+
+.dark table thead th {
+	color: #cbd5e1 !important;
+}
+
+.dark table tbody {
+	background-color: #0c0c0e !important;
+}
+
+.dark table tbody tr {
+	border-color: #1e1e24 !important;
+}
+
+.dark table tbody td {
+	color: #e2e8f0 !important;
+}
+
+/* Pre / Code snippets dark mode styling */
+.dark pre {
+	background-color: #08080a !important;
+	border-color: #27272a !important;
+	color: #e2e8f0 !important;
 }

@@ -8,10 +8,18 @@
 		Badge,
 		Button,
 		Tooltip,
+		CodeBlock,
 		useClipboard,
 		toast
 	} from 'yaxa-svelte';
-	import type { StudioState } from '$lib/types/dashboard';
+	import { Monitor, MessageCircle } from '@lucide/svelte';
+	import type {
+		StudioState,
+		TemplateType,
+		ThemeType,
+		PatternOption,
+		FontOption
+	} from '$lib/types/dashboard';
 
 	interface Props {
 		studioState: StudioState;
@@ -31,12 +39,132 @@
 
 	const clipboard = useClipboard();
 
+	interface QuickPreset {
+		name: string;
+		icon: string;
+		template: TemplateType;
+		theme: ThemeType;
+		pattern: PatternOption;
+		font: FontOption;
+		title?: string;
+		description?: string;
+		siteName?: string;
+		badge?: string;
+		episode?: string;
+		host?: string;
+		guest?: string;
+		duration?: string;
+		eventDate?: string;
+		location?: string;
+		speaker?: string;
+		author?: string;
+		handle?: string;
+		role?: string;
+		version?: string;
+		items?: string;
+	}
+
+	const quickPresets: QuickPreset[] = [
+		{
+			name: 'SaaS',
+			icon: '🚀',
+			template: 'saas',
+			theme: 'brand',
+			pattern: 'glow',
+			font: 'inter',
+			title: 'Organic-OG: Zero-WASM OpenGraph Engine',
+			description: 'Next-gen dynamic visual cards generated at the edge in <10ms.',
+			siteName: 'organic-og.io',
+			badge: 'v2.0 RELEASE'
+		},
+		{
+			name: 'Podcast',
+			icon: '🎙️',
+			template: 'podcast',
+			theme: 'dark',
+			pattern: 'dots',
+			font: 'outfit',
+			title: 'Architecting for Zero-WASM Performance',
+			description: 'Deep dive into sub-millisecond edge SVG rasterization with Svelte 5.',
+			siteName: 'The Runtime Podcast',
+			episode: 'EPISODE #42',
+			host: 'Alex Rivera',
+			guest: 'Sarah Chen',
+			duration: '48 MIN'
+		},
+		{
+			name: 'Event',
+			icon: '📅',
+			template: 'event',
+			theme: 'dark',
+			pattern: 'grid',
+			font: 'inter',
+			title: 'Global Edge & Cloud Architecture Summit 2026',
+			description: 'Join 10,000+ engineers building distributed edge computing systems.',
+			siteName: 'EdgeConf 2026',
+			eventDate: 'OCT 24-26, 2026',
+			location: 'SAN FRANCISCO, CA',
+			speaker: 'KEYNOTE BY JENSEN HUANG'
+		},
+		{
+			name: 'Quote',
+			icon: '💬',
+			template: 'quote',
+			theme: 'light',
+			pattern: 'none',
+			font: 'serif',
+			title:
+				'Organic-OG reduced our social card generation time from 850ms to 9ms, slashing serverless costs by 94%.',
+			author: 'Guillermo Rauch',
+			handle: '@rauchg',
+			role: 'CEO & Founder @ Vercel',
+			siteName: 'Customer Testimonial'
+		},
+		{
+			name: 'Product',
+			icon: '📦',
+			template: 'ecommerce',
+			theme: 'brand',
+			pattern: 'glow',
+			font: 'outfit',
+			title: 'Pro Mechanical Custom Keyboard MK-7',
+			description: 'Wireless Bluetooth 5.3, hot-swappable switches, and aluminum body.',
+			badge: '$189.00 • IN STOCK',
+			siteName: 'KeyStore'
+		},
+		{
+			name: 'Changelog',
+			icon: '⚡',
+			template: 'changelog',
+			theme: 'dark',
+			pattern: 'dots',
+			font: 'mono',
+			title: 'v2.4.0 Engine Update Released',
+			description: 'Massive speed improvements and new customizable typography presets.',
+			siteName: 'ORGANIC-OG RELEASES',
+			version: 'v2.4.0 RELEASE',
+			items: 'Zero-WASM SVG Renderer | 9 Designer Templates | Upstash Redis Caching'
+		}
+	];
+
+	function applyPreset(preset: (typeof quickPresets)[0]) {
+		const copy = { ...preset } as Partial<typeof preset>;
+		delete copy.name;
+		delete copy.icon;
+		Object.assign(studioState, copy);
+		toast.success(`Applied ${preset.name} Preset`);
+	}
+
 	const templateOptions = [
 		{ label: 'SaaS Card', value: 'saas' },
 		{ label: 'Blog Hero', value: 'blog' },
 		{ label: 'Minimalist Border', value: 'minimal' },
 		{ label: 'E-Commerce Product', value: 'ecommerce' },
-		{ label: 'GitHub Repository', value: 'github' }
+		{ label: 'GitHub Repository', value: 'github' },
+		{ label: 'Podcast & Episode', value: 'podcast' },
+		{ label: 'Event & Conference', value: 'event' },
+		{ label: 'Social Quote / Testimonial', value: 'quote' },
+		{ label: 'Changelog Release', value: 'changelog' }
 	];
 
 	const themeOptions = [
@@ -45,6 +173,21 @@
 		{ label: 'Light Clean', value: 'light' }
 	];
 
+	const patternOptions = [
+		{ label: 'No Overlay', value: 'none' },
+		{ label: 'Tech Grid', value: 'grid' },
+		{ label: 'Dot Matrix', value: 'dots' },
+		{ label: 'Glow Accent', value: 'glow' }
+	];
+
+	const fontOptions = [
+		{ label: 'Inter Sans', value: 'inter' },
+		{ label: 'JetBrains Mono', value: 'mono' },
+		{ label: 'Outfit Modern', value: 'outfit' },
+		{ label: 'Playfair Serif', value: 'serif' }
+	];
+
+	let showCustomColors = $state(false);
 	let previewMode = $state<'canvas' | 'twitter' | 'discord' | 'linkedin' | 'whatsapp'>('canvas');
 
 	const previewModes = [
@@ -75,10 +218,14 @@
 
 <main class="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8 lg:grid-cols-12">
 	<!-- Controls Column -->
-	<Card class="h-fit space-y-4 p-6 lg:col-span-5">
+	<Card
+		class="h-fit space-y-4 border border-neutral-200 bg-white p-6 shadow-sm lg:col-span-5 dark:border-neutral-800/90 dark:bg-[#121215]"
+	>
 		<div class="flex items-center justify-between">
-			<h2 class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">
-				Layout & Parameters
+			<h2
+				class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
+			>
+				Layout & Engine Controls
 			</h2>
 			{#if signatureToken}
 				<Tooltip text="HMAC-SHA256 Cryptographic URL Signature">
@@ -89,23 +236,106 @@
 			{/if}
 		</div>
 
-		<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-			<FormField label="Layout Template">
-				<Select bind:value={studioState.template} options={templateOptions} class="w-full" />
-			</FormField>
-			<FormField label="Theme Style">
-				<Select bind:value={studioState.theme} options={themeOptions} class="w-full" />
+		<!-- 1-Click Quick Presets (Decluttered Modern Pills) -->
+		<div class="space-y-1.5">
+			<div
+				class="flex items-center justify-between text-[11px] font-medium text-neutral-500 dark:text-neutral-400"
+			>
+				<span class="text-[10px] font-semibold tracking-wider uppercase">Quick Presets</span>
+				<span class="text-[10px] text-neutral-400 dark:text-neutral-500">1-click switch</span>
+			</div>
+			<div class="flex flex-wrap gap-1.5">
+				{#each quickPresets as preset (preset.name)}
+					<button
+						type="button"
+						onclick={() => applyPreset(preset)}
+						class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all {studioState.template ===
+							preset.template && studioState.theme === preset.theme
+							? 'border-primary-500 bg-primary-500/10 font-semibold text-primary-600 shadow-2xs ring-1 ring-primary-500/40 dark:border-primary-500/60 dark:bg-primary-950/60 dark:text-primary-300'
+							: 'border-neutral-200/90 bg-neutral-50/70 text-neutral-700 hover:border-neutral-300 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-300 dark:hover:border-neutral-700 dark:hover:bg-neutral-800'}"
+					>
+						<span>{preset.icon}</span>
+						<span>{preset.name}</span>
+					</button>
+				{/each}
+			</div>
+		</div>
+
+		<!-- Primary Template Selector (Full Width: Zero Clipping) -->
+		<FormField label="Template Layout">
+			<Select
+				bind:value={studioState.template}
+				options={templateOptions}
+				size="sm"
+				class="w-full font-medium"
+			/>
+		</FormField>
+
+		<!-- Theme & Format (2 Columns: Spacious, Zero Clipping) -->
+		<div class="grid grid-cols-2 gap-3">
+			<FormField label="Theme Palette">
+				<Select bind:value={studioState.theme} options={themeOptions} size="sm" class="w-full" />
 			</FormField>
 			<FormField label="Output Format">
 				<Select
 					bind:value={studioState.format}
 					options={[
-						{ label: 'PNG (Social)', value: 'png' },
-						{ label: 'SVG (Vector)', value: 'svg' }
+						{ label: 'PNG (Social Image)', value: 'png' },
+						{ label: 'SVG (Vector Stream)', value: 'svg' }
 					]}
+					size="sm"
 					class="w-full"
 				/>
 			</FormField>
+		</div>
+
+		<!-- Typography & Pattern (2 Columns: Spacious, Zero Clipping) -->
+		<div class="grid grid-cols-2 gap-3">
+			<FormField label="Typography">
+				<Select bind:value={studioState.font} options={fontOptions} size="sm" class="w-full" />
+			</FormField>
+			<FormField label="Pattern Overlay">
+				<Select
+					bind:value={studioState.pattern}
+					options={patternOptions}
+					size="sm"
+					class="w-full"
+				/>
+			</FormField>
+		</div>
+
+		<!-- Custom Hex Colors Toggle -->
+		<div class="border-y border-neutral-200/80 py-2 dark:border-neutral-800/80">
+			<button
+				type="button"
+				class="flex w-full cursor-pointer items-center justify-between text-xs font-semibold text-neutral-700 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
+				onclick={() => (showCustomColors = !showCustomColors)}
+			>
+				<span>Custom Color Overrides</span>
+				<span class="font-mono text-neutral-400">{showCustomColors ? '▲ Hide' : '▼ Expand'}</span>
+			</button>
+
+			{#if showCustomColors}
+				<div class="mt-3 grid grid-cols-3 gap-2">
+					<FormField label="Background">
+						<Input bind:value={studioState.bg} placeholder="#09090b" class="font-mono text-xs" />
+					</FormField>
+					<FormField label="Accent">
+						<Input
+							bind:value={studioState.accent}
+							placeholder="#3b82f6"
+							class="font-mono text-xs"
+						/>
+					</FormField>
+					<FormField label="Text Color">
+						<Input
+							bind:value={studioState.textColor}
+							placeholder="#ffffff"
+							class="font-mono text-xs"
+						/>
+					</FormField>
+				</div>
+			{/if}
 		</div>
 
 		<!-- Dynamic Title Field -->
@@ -114,12 +344,26 @@
 				? 'Repository Name'
 				: studioState.template === 'ecommerce'
 					? 'Product Name'
-					: 'Headline Title'}
+					: studioState.template === 'quote'
+						? 'Testimonial Quote'
+						: studioState.template === 'podcast'
+							? 'Episode Headline'
+							: 'Headline Title'}
 		>
-			<Input
-				bind:value={studioState.title}
-				placeholder={studioState.template === 'github' ? 'e.g. dynamic-og-engine' : 'Card title...'}
-			/>
+			{#if studioState.template === 'quote'}
+				<Textarea
+					bind:value={studioState.title}
+					placeholder="Enter customer quote or testimonial..."
+					rows={3}
+				/>
+			{:else}
+				<Input
+					bind:value={studioState.title}
+					placeholder={studioState.template === 'github'
+						? 'e.g. dynamic-og-engine'
+						: 'Card title...'}
+				/>
+			{/if}
 		</FormField>
 
 		<!-- Description (SaaS, Blog, Minimal) -->
@@ -133,15 +377,21 @@
 			</FormField>
 		{/if}
 
-		<!-- Site Name & Badge (SaaS, Blog, Ecommerce, GitHub) -->
-		{#if studioState.template !== 'minimal'}
+		<!-- Site Name & Badge (SaaS, Blog, Ecommerce, GitHub, Event, Changelog) -->
+		{#if studioState.template !== 'minimal' && studioState.template !== 'quote'}
 			<div class="grid gap-4 {studioState.template === 'github' ? 'grid-cols-1' : 'grid-cols-2'}">
 				<FormField
 					label={studioState.template === 'github'
-						? 'Repository Breadcrumb / Owner'
+						? 'Repository Owner'
 						: studioState.template === 'ecommerce'
 							? 'Store / Brand Name'
-							: 'Site Name / Domain'}
+							: studioState.template === 'podcast'
+								? 'Podcast Show Name'
+								: studioState.template === 'event'
+									? 'Conference / Event Name'
+									: studioState.template === 'changelog'
+										? 'Product Name'
+										: 'Site Name / Domain'}
 				>
 					<Input
 						bind:value={studioState.siteName}
@@ -150,18 +400,32 @@
 				</FormField>
 				{#if studioState.template !== 'github'}
 					<FormField
-						label={studioState.template === 'ecommerce' ? 'Tag / Promotion' : 'Badge / Category'}
+						label={studioState.template === 'ecommerce'
+							? 'Promotion Tag'
+							: studioState.template === 'podcast'
+								? 'Episode Number'
+								: studioState.template === 'event'
+									? 'Event Date'
+									: studioState.template === 'changelog'
+										? 'Release Version'
+										: 'Badge / Category'}
 					>
 						<Input
 							bind:value={studioState.badge}
-							placeholder={studioState.template === 'ecommerce' ? '20% OFF' : 'Tutorial'}
+							placeholder={studioState.template === 'podcast'
+								? 'EPISODE #42'
+								: studioState.template === 'event'
+									? 'OCTOBER 15, 2026'
+									: studioState.template === 'changelog'
+										? 'v2.5.0 Release'
+										: 'Tutorial'}
 						/>
 					</FormField>
 				{/if}
 			</div>
 		{/if}
 
-		<!-- E-Commerce Dynamic Inputs -->
+		<!-- E-Commerce Inputs -->
 		{#if studioState.template === 'ecommerce'}
 			<div class="grid grid-cols-2 gap-4 border-t border-neutral-200 pt-2 dark:border-neutral-800">
 				<FormField label="Price Tag">
@@ -173,7 +437,7 @@
 			</div>
 		{/if}
 
-		<!-- GitHub Dynamic Inputs -->
+		<!-- GitHub Inputs -->
 		{#if studioState.template === 'github'}
 			<div class="grid grid-cols-3 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
 				<FormField label="Stars Count">
@@ -188,9 +452,69 @@
 			</div>
 		{/if}
 
-		<!-- Logo / Avatar (SaaS, Blog) -->
-		{#if studioState.template === 'saas' || studioState.template === 'blog'}
-			<FormField label="Logo / Avatar URL">
+		<!-- Podcast Inputs -->
+		{#if studioState.template === 'podcast'}
+			<div class="grid grid-cols-3 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+				<FormField label="Host Name">
+					<Input bind:value={studioState.host} placeholder="Rich Harris" />
+				</FormField>
+				<FormField label="Guest Name">
+					<Input bind:value={studioState.guest} placeholder="Evan You" />
+				</FormField>
+				<FormField label="Duration">
+					<Input bind:value={studioState.duration} placeholder="52 MIN" />
+				</FormField>
+			</div>
+		{/if}
+
+		<!-- Event Inputs -->
+		{#if studioState.template === 'event'}
+			<div class="grid grid-cols-2 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+				<FormField label="Location / Venue">
+					<Input bind:value={studioState.location} placeholder="San Francisco & Virtual" />
+				</FormField>
+				<FormField label="Keynote Speaker(s)">
+					<Input bind:value={studioState.speaker} placeholder="Keynote Speakers" />
+				</FormField>
+			</div>
+		{/if}
+
+		<!-- Quote Inputs -->
+		{#if studioState.template === 'quote'}
+			<div class="grid grid-cols-3 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+				<FormField label="Author Name">
+					<Input bind:value={studioState.author} placeholder="Guillermo Rauch" />
+				</FormField>
+				<FormField label="Author Handle">
+					<Input bind:value={studioState.handle} placeholder="@rauchg" />
+				</FormField>
+				<FormField label="Role / Company">
+					<Input bind:value={studioState.role} placeholder="CEO at Vercel" />
+				</FormField>
+			</div>
+		{/if}
+
+		<!-- Changelog Inputs -->
+		{#if studioState.template === 'changelog'}
+			<div class="border-t border-neutral-200 pt-2 dark:border-neutral-800">
+				<FormField label="Feature Bullet Highlights (separated by |)">
+					<Input
+						bind:value={studioState.items}
+						placeholder="Native SVG Engine | Zero WASM Resvg | Distributed Edge Caching"
+					/>
+				</FormField>
+			</div>
+		{/if}
+
+		<!-- Logo / Avatar (All Templates Except Minimal) -->
+		{#if studioState.template !== 'minimal'}
+			<FormField
+				label={studioState.template === 'podcast'
+					? 'Cover Art URL'
+					: studioState.template === 'quote' || studioState.template === 'blog'
+						? 'Avatar / Author Photo URL'
+						: 'Logo / Icon URL'}
+			>
 				<Input bind:value={studioState.logoUrl} placeholder="https://.../logo.png" />
 			</FormField>
 		{/if}
@@ -199,12 +523,26 @@
 	<!-- Preview Column -->
 	<div class="flex flex-col gap-4 lg:col-span-7">
 		<div class="flex flex-wrap items-center justify-between gap-2">
-			<div class="flex items-center gap-2">
-				<h2 class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">
+			<div class="flex items-center gap-2.5">
+				<h2
+					class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
+				>
 					Social Simulator
 				</h2>
 				{#if isRendering}
-					<span class="animate-pulse font-mono text-xs text-primary-400">Rendering...</span>
+					<span
+						class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-600 dark:text-amber-400"
+					>
+						<span class="h-1.5 w-1.5 animate-ping rounded-full bg-amber-500"></span>
+						Rendering...
+					</span>
+				{:else}
+					<span
+						class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400"
+					>
+						<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+						&lt;10ms Edge Ready
+					</span>
 				{/if}
 			</div>
 			<!-- Mode Switcher Buttons -->
@@ -222,18 +560,7 @@
 							(previewMode = m.value as 'canvas' | 'twitter' | 'discord' | 'linkedin' | 'whatsapp')}
 					>
 						{#if m.icon === 'monitor'}
-							<svg
-								viewBox="0 0 24 24"
-								class="h-3.5 w-3.5 fill-none stroke-current"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<rect width="20" height="14" x="2" y="3" rx="2" />
-								<line x1="8" x2="16" y1="21" y2="21" />
-								<line x1="12" x2="12" y1="17" y2="21" />
-							</svg>
+							<Monitor class="h-3.5 w-3.5" />
 						{:else if m.icon === 'twitter'}
 							<svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-current" aria-hidden="true">
 								<path
@@ -253,15 +580,7 @@
 								/>
 							</svg>
 						{:else if m.icon === 'message-circle'}
-							<svg
-								viewBox="0 0 24 24"
-								class="h-3.5 w-3.5 fill-current text-emerald-500"
-								aria-hidden="true"
-							>
-								<path
-									d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.59.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"
-								/>
-							</svg>
+							<MessageCircle class="h-3.5 w-3.5 text-emerald-500" />
 						{/if}
 						<span>{m.label}</span>
 					</button>
@@ -271,7 +590,7 @@
 
 		<!-- Simulator Canvas Container -->
 		<div
-			class="flex w-full items-center justify-center rounded-xl border border-neutral-200 bg-neutral-100/70 py-4 dark:border-neutral-900 dark:bg-neutral-950/60"
+			class="flex w-full items-center justify-center rounded-xl border border-neutral-200 bg-neutral-100/70 py-4 dark:border-neutral-800/80 dark:bg-black/60"
 		>
 			<!-- 1. Raw Canvas Mode -->
 			{#if previewMode === 'canvas'}
@@ -304,13 +623,13 @@
 						{/if}
 					</div>
 					<div class="space-y-0.5 border-t border-neutral-800/80 bg-[#0d0e10] p-3">
-						<div class="text-[11px] font-normal text-neutral-500">
-							{studioState.siteName || 'organic-og.netlify.app'}
+						<div class="text-[11px] font-normal text-neutral-400">
+							{studioState.siteName || 'organic-og.vercel.app'}
 						</div>
-						<div class="truncate text-xs font-semibold text-neutral-200">
+						<div class="truncate text-xs font-semibold text-neutral-100">
 							{studioState.title}
 						</div>
-						<div class="line-clamp-1 text-[11px] text-neutral-400">
+						<div class="line-clamp-1 text-[11px] text-neutral-300">
 							{studioState.description}
 						</div>
 					</div>
@@ -321,13 +640,13 @@
 				<div
 					class="w-full max-w-lg space-y-2 rounded-lg border-l-4 border-indigo-500 bg-[#2b2d31] p-4 text-xs shadow-2xl"
 				>
-					<div class="text-[11px] font-medium text-neutral-400">
-						{studioState.siteName || 'organic-og.netlify.app'}
+					<div class="text-[11px] font-medium text-neutral-300">
+						{studioState.siteName || 'organic-og.vercel.app'}
 					</div>
 					<div class="cursor-pointer text-sm font-bold text-sky-400 hover:underline">
 						{studioState.title}
 					</div>
-					<div class="text-xs text-neutral-300">
+					<div class="text-xs text-neutral-200">
 						{studioState.description}
 					</div>
 					<div
@@ -355,8 +674,8 @@
 							OG
 						</div>
 						<div>
-							<div class="text-xs font-semibold text-neutral-200">Organic-OG</div>
-							<div class="text-[10px] text-neutral-500">Promoted • Just now</div>
+							<div class="text-xs font-semibold text-neutral-100">Organic-OG</div>
+							<div class="text-[10px] text-neutral-400">Promoted • Just now</div>
 						</div>
 					</div>
 					<div class="aspect-[1200/630] w-full overflow-hidden bg-neutral-950">
@@ -369,11 +688,11 @@
 						{/if}
 					</div>
 					<div class="space-y-0.5 border-t border-neutral-800 bg-neutral-950/80 p-3">
-						<div class="truncate text-xs font-semibold text-neutral-200">
+						<div class="truncate text-xs font-semibold text-neutral-100">
 							{studioState.title}
 						</div>
 						<div class="text-[11px] text-neutral-400">
-							{studioState.siteName || 'organic-og.netlify.app'} • Read more
+							{studioState.siteName || 'organic-og.vercel.app'} • Read more
 						</div>
 					</div>
 				</div>
@@ -406,7 +725,7 @@
 								<div
 									class="text-[10px] font-medium tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
 								>
-									{studioState.siteName || 'organic-og.netlify.app'}
+									{studioState.siteName || 'organic-og.vercel.app'}
 								</div>
 								<div class="truncate text-xs font-semibold text-neutral-900 dark:text-neutral-100">
 									{studioState.title}
@@ -424,7 +743,7 @@
 							<span
 								class="max-w-[210px] truncate text-[12px] text-emerald-800 underline dark:text-emerald-200"
 							>
-								https://{studioState.siteName || 'organic-og.netlify.app'}
+								https://{studioState.siteName || 'organic-og.vercel.app'}
 							</span>
 							<div
 								class="flex shrink-0 items-center gap-1 text-[10px] text-neutral-600 dark:text-emerald-200/70"
@@ -454,10 +773,12 @@
 		</div>
 
 		<!-- Embed Tag Code snippet -->
-		<Card class="space-y-3 p-4">
+		<Card
+			class="space-y-3 border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
+		>
 			<div class="flex items-center justify-between">
 				<span
-					class="font-mono text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400"
+					class="font-mono text-xs font-semibold text-neutral-600 uppercase dark:text-neutral-400"
 				>
 					Signed Embed Code ({studioState.format === 'svg' ? 'SVG Vector' : 'PNG Social'})
 				</span>
@@ -469,15 +790,15 @@
 					<Button color="primary" variant="solid" size="xs" onclick={copyMetaTag}>Meta Tag</Button>
 				</div>
 			</div>
-			<div
-				class="rounded-md bg-neutral-100 p-3 font-mono text-xs break-all text-primary-600 select-all dark:bg-neutral-950 dark:text-primary-400"
-			>
-				{#if studioState.format === 'svg'}
-					![{studioState.title || 'OpenGraph Card'}]({baseUrl}{signedPreviewUrl})
-				{:else}
-					&lt;meta property="og:image" content="{baseUrl}{signedPreviewUrl}" /&gt;
-				{/if}
-			</div>
+			<CodeBlock
+				code={studioState.format === 'svg'
+					? `<!-- SVG Vector Embed (README / HTML) -->\n![${studioState.title || 'OpenGraph Card'}](${baseUrl}${signedPreviewUrl})`
+					: `<!-- OpenGraph Meta Tags -->\n<meta property="og:title" content="${studioState.title || 'OpenGraph Card'}" />\n<meta property="og:description" content="${studioState.description || ''}" />\n<meta property="og:image" content="${baseUrl}${signedPreviewUrl}" />\n<meta name="twitter:card" content="summary_large_image" />`}
+				language={studioState.format === 'svg' ? 'markdown' : 'html'}
+				filename={studioState.format === 'svg' ? 'README.md' : 'index.html'}
+				showLineNumbers={true}
+				themeMode="adaptive"
+			/>
 		</Card>
 	</div>
 </main>

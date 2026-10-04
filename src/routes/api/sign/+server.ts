@@ -7,7 +7,7 @@ const bodySchema = z.object({
 	params: z.record(z.string(), z.any())
 });
 
-export const POST: RequestHandler = async ({ request, locals }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const body = await request.json();
 		const { params } = bodySchema.parse(body);
@@ -21,13 +21,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			throw error(500, 'OG Signing Secret is not configured.');
 		}
 
-		// Attach demo flag if unauthenticated so studio previews are watermarked
-		const signedParams = { ...params };
-		if (!locals.user && !signedParams.demo) {
-			signedParams.demo = '1';
-		}
-
-		const canonical = createCanonicalQueryString(signedParams);
+		const canonical = createCanonicalQueryString(params);
 		const signature = await generateHmacSignature(canonical, secret);
 
 		return json({

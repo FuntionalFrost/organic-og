@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { Card, Button, ButtonGroup, Badge, useClipboard, toast } from 'yaxa-svelte';
+	import { Card, Button, ButtonGroup, Badge, CodeBlock } from 'yaxa-svelte';
 	import type { StudioState } from '$lib/types/dashboard';
 	import {
 		generateCurlSnippet,
 		generateTypeScriptSnippet,
+		generateNextJsSnippet,
 		generatePythonSnippet,
 		generateSvelteKitSnippet,
 		generateMarkdownSnippet
@@ -18,8 +19,46 @@
 
 	let { studioState, apiKeyPrefix, signedPreviewUrl, baseUrl }: Props = $props();
 
-	let docLanguage = $state<'curl' | 'typescript' | 'python' | 'svelte' | 'markdown'>('curl');
-	const clipboard = useClipboard();
+	let docLanguage = $state<'curl' | 'typescript' | 'nextjs' | 'python' | 'svelte' | 'markdown'>(
+		'curl'
+	);
+
+	function getCodeLanguage(lang: typeof docLanguage): string {
+		switch (lang) {
+			case 'curl':
+				return 'bash';
+			case 'typescript':
+			case 'nextjs':
+				return 'typescript';
+			case 'python':
+				return 'python';
+			case 'svelte':
+				return 'svelte';
+			case 'markdown':
+				return 'markdown';
+			default:
+				return 'typescript';
+		}
+	}
+
+	function getFilename(lang: typeof docLanguage): string {
+		switch (lang) {
+			case 'curl':
+				return 'curl.sh';
+			case 'typescript':
+				return 'og-client.ts';
+			case 'nextjs':
+				return 'app/blog/[slug]/page.tsx';
+			case 'python':
+				return 'generate_og.py';
+			case 'svelte':
+				return 'src/routes/+page.svelte';
+			case 'markdown':
+				return 'README.md';
+			default:
+				return 'snippet.txt';
+		}
+	}
 
 	let generatedCode = $derived.by(() => {
 		switch (docLanguage) {
@@ -27,6 +66,8 @@
 				return generateCurlSnippet(studioState, apiKeyPrefix, baseUrl);
 			case 'typescript':
 				return generateTypeScriptSnippet(studioState, apiKeyPrefix, baseUrl);
+			case 'nextjs':
+				return generateNextJsSnippet(signedPreviewUrl, baseUrl);
 			case 'python':
 				return generatePythonSnippet(studioState, apiKeyPrefix, baseUrl);
 			case 'svelte':
@@ -43,42 +84,92 @@
 			param: 'template',
 			type: 'string',
 			default: 'saas',
-			desc: 'Layout type: saas, blog, ecommerce, github, minimal'
+			desc: 'Layout type: saas, blog, minimal, ecommerce, github, podcast, event, quote, changelog'
 		},
 		{
 			param: 'format',
 			type: 'string',
 			default: 'png',
-			desc: 'Output format: png (raster bitmap for social cards) or svg (vector streaming for web/README)'
+			desc: 'Output format: png (social cards) or svg (vector streaming for web/README)'
+		},
+		{
+			param: 'pattern',
+			type: 'string',
+			default: 'none',
+			desc: 'Pattern overlay: none, grid, dots, glow'
+		},
+		{
+			param: 'font',
+			type: 'string',
+			default: 'inter',
+			desc: 'Typography family: inter, mono, outfit, serif'
+		},
+		{
+			param: 'bg / accent / textColor',
+			type: 'string (hex/rgb)',
+			default: 'preset',
+			desc: 'Custom color overrides (e.g. bg=%230f172a&accent=%23ec4899)'
 		},
 		{
 			param: 'title',
 			type: 'string',
 			default: 'Organic-OG',
-			desc: 'Main headline text (supports auto-wrapping)'
+			desc: 'Main headline text or quote body (auto-wrapping)'
 		},
 		{
 			param: 'description',
 			type: 'string',
 			default: "''",
-			desc: 'Subheading or article summary excerpt'
+			desc: 'Subheading, article excerpt, or author role'
 		},
-		{ param: 'siteName', type: 'string', default: "''", desc: 'Brand or domain name in header' },
+		{
+			param: 'siteName',
+			type: 'string',
+			default: "''",
+			desc: 'Brand, podcast show name, or domain'
+		},
 		{
 			param: 'badge',
 			type: 'string',
 			default: "''",
-			desc: 'Accent pill tag (e.g. "Sale", "New", "v2.0")'
+			desc: 'Accent badge or tag (e.g. "Tutorial", "EPISODE #01", "v2.5.0")'
 		},
-		{ param: 'theme', type: 'string', default: 'dark', desc: 'Color palette: dark, light, brand' },
 		{
-			param: 'price',
+			param: 'theme',
+			type: 'string',
+			default: 'dark',
+			desc: 'Color palette preset: dark, light, brand'
+		},
+		{
+			param: 'logoUrl / avatarUrl',
+			type: 'string (URL)',
+			default: "''",
+			desc: 'Remote brand logo, avatar, or cover art'
+		},
+		{
+			param: 'episode / host / guest / duration',
 			type: 'string',
 			default: "''",
-			desc: 'Price string (used in ecommerce template)'
+			desc: 'Podcast show metadata'
 		},
-		{ param: 'stars', type: 'string', default: "''", desc: 'Star count (used in github template)' },
-		{ param: 'forks', type: 'string', default: "''", desc: 'Fork count (used in github template)' },
+		{
+			param: 'eventDate / location / speaker',
+			type: 'string',
+			default: "''",
+			desc: 'Event and conference metadata'
+		},
+		{
+			param: 'author / handle / role',
+			type: 'string',
+			default: "''",
+			desc: 'Quote and testimonial author attribution'
+		},
+		{
+			param: 'version / items',
+			type: 'string',
+			default: "''",
+			desc: 'Changelog release version and pipe-separated highlights'
+		},
 		{
 			param: 's',
 			type: 'string',
@@ -86,18 +177,13 @@
 			desc: 'HMAC-SHA256 signature for unauthenticated public URLs'
 		}
 	];
-
-	function copySnippet() {
-		clipboard.copy(generatedCode);
-		toast.success('Copied Code Snippet to Clipboard');
-	}
 </script>
 
 <main class="mx-auto w-full max-w-7xl flex-1 space-y-12 p-8">
 	<div>
 		<h1 class="text-xl font-bold text-neutral-900 dark:text-white">Developer Integration Hub</h1>
 		<p class="text-sm text-neutral-600 dark:text-neutral-400">
-			Complete API reference, interactive SDK snippets, and authentication guides.
+			Complete API reference, interactive multi-framework SDK snippets, and authentication guides.
 		</p>
 	</div>
 
@@ -105,7 +191,7 @@
 	<section class="space-y-4">
 		<div class="flex flex-wrap items-center justify-between gap-3">
 			<h2
-				class="text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+				class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 			>
 				Live SDK Snippets (Synced with Studio)
 			</h2>
@@ -125,6 +211,14 @@
 					onclick={() => (docLanguage = 'typescript')}
 				>
 					TypeScript
+				</Button>
+				<Button
+					variant={docLanguage === 'nextjs' ? 'solid' : 'outline'}
+					color="primary"
+					size="xs"
+					onclick={() => (docLanguage = 'nextjs')}
+				>
+					Next.js
 				</Button>
 				<Button
 					variant={docLanguage === 'python' ? 'solid' : 'outline'}
@@ -153,51 +247,48 @@
 			</ButtonGroup>
 		</div>
 
-		<Card class="overflow-hidden p-0 shadow-xl">
-			<div
-				class="flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-6 py-3 dark:border-neutral-800 dark:bg-neutral-950"
-			>
-				<div class="flex items-center gap-2">
-					<Badge color="primary" variant="subtle" size="xs" class="font-mono uppercase">
-						{docLanguage}
-					</Badge>
-					<span class="font-mono text-xs text-neutral-500 dark:text-neutral-400">
-						Implementation Example
-					</span>
-				</div>
-				<Button color="neutral" variant="ghost" size="xs" onclick={copySnippet}>
-					📋 Copy Snippet
-				</Button>
-			</div>
-			<pre
-				class="overflow-x-auto p-6 font-mono text-xs leading-relaxed text-neutral-800 dark:text-neutral-200"><code
-					>{generatedCode}</code
-				></pre>
-		</Card>
+		<div
+			class="overflow-hidden rounded-xl border border-neutral-200/80 shadow-sm dark:border-neutral-800/80"
+		>
+			<CodeBlock
+				code={generatedCode}
+				language={getCodeLanguage(docLanguage)}
+				filename={getFilename(docLanguage)}
+				showLineNumbers={true}
+				themeMode="adaptive"
+			/>
+		</div>
 	</section>
 
 	<!-- 2. Authentication Methods -->
 	<section class="space-y-4">
 		<h2
-			class="text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+			class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 		>
 			Authentication Reference
 		</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<Card class="space-y-2 p-5">
+			<Card
+				class="space-y-3 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+			>
 				<div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white">
 					<span class="text-amber-500 dark:text-amber-400">🔑</span>
 					<span>1. Bearer API Key</span>
 				</div>
-				<p class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
-					Ideal for backend servers, headless CMS hooks, and CI/CD pipelines. Deducts 1 credit per
-					uncached render.
+				<p class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
+					Ideal for backend servers, headless CMS hooks, and CI/CD automation. Provides unlimited
+					free rendering and live telemetry tracking.
 				</p>
-				<pre
-					class="mt-2 overflow-x-auto rounded border border-neutral-200 bg-neutral-50 p-2.5 font-mono text-xs text-amber-600 dark:border-transparent dark:bg-neutral-950 dark:text-amber-200">Authorization: Bearer og_live_...</pre>
+				<CodeBlock
+					code={`Authorization: Bearer ${apiKeyPrefix || 'og_live_prod_abcdef123456'}`}
+					language="bash"
+					themeMode="adaptive"
+				/>
 			</Card>
 
-			<Card class="space-y-2 p-5">
+			<Card
+				class="space-y-3 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+			>
 				<div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white">
 					<span class="text-emerald-500 dark:text-emerald-400">🛡️</span>
 					<span>
@@ -206,12 +297,15 @@
 						>)
 					</span>
 				</div>
-				<p class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
-					Ideal for public <code class="text-neutral-700 dark:text-neutral-300">&lt;meta&gt;</code> tags.
+				<p class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
+					Ideal for public <code class="text-neutral-800 dark:text-neutral-200">&lt;meta&gt;</code> tags.
 					Prevents URL parameter tampering without leaking private keys.
 				</p>
-				<pre
-					class="mt-2 overflow-x-auto rounded border border-neutral-200 bg-neutral-50 p-2.5 font-mono text-xs text-emerald-600 dark:border-transparent dark:bg-neutral-950 dark:text-emerald-200">/api/og?title=Edge&s=4f8b92a1c0d3e5f7</pre>
+				<CodeBlock
+					code={`GET ${baseUrl || 'https://organic-og.io'}/api/og?title=Edge&s=4f8b92a1c0d3e5f7`}
+					language="bash"
+					themeMode="adaptive"
+				/>
 			</Card>
 		</div>
 	</section>
@@ -219,32 +313,36 @@
 	<!-- 3. API Endpoints -->
 	<section class="space-y-4">
 		<h2
-			class="text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+			class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 		>
 			Endpoints
 		</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<Card class="space-y-2 p-5">
+			<Card
+				class="space-y-2 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+			>
 				<div class="flex items-center gap-3">
 					<Badge color="success" variant="solid" size="xs" class="font-mono font-bold">GET</Badge>
-					<span class="font-mono text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+					<span class="font-mono text-sm font-semibold text-neutral-900 dark:text-white">
 						/api/og
 					</span>
 				</div>
-				<p class="text-xs text-neutral-600 dark:text-neutral-400">
-					Rasterizes and streams a binary PNG image (1200x630 px) directly from edge cache or native
-					Node.js renderers.
+				<p class="text-xs text-neutral-600 dark:text-neutral-300">
+					Rasterizes and streams a binary PNG image (1200x630 px) or native vector SVG directly from
+					hybrid edge cache or Resvg renderer.
 				</p>
 			</Card>
 
-			<Card class="space-y-2 p-5">
+			<Card
+				class="space-y-2 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+			>
 				<div class="flex items-center gap-3">
 					<Badge color="primary" variant="solid" size="xs" class="font-mono font-bold">POST</Badge>
-					<span class="font-mono text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+					<span class="font-mono text-sm font-semibold text-neutral-900 dark:text-white">
 						/api/sign
 					</span>
 				</div>
-				<p class="text-xs text-neutral-600 dark:text-neutral-400">
+				<p class="text-xs text-neutral-600 dark:text-neutral-300">
 					Generates a 16-character canonical HMAC signature and pre-signed URL from any query
 					parameter payload.
 				</p>
@@ -255,37 +353,39 @@
 	<!-- 4. Query Parameters Table -->
 	<section class="space-y-4">
 		<h2
-			class="text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+			class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 		>
 			URL Parameters Specification
 		</h2>
-		<Card class="overflow-x-auto p-0 shadow-xs">
+		<Card
+			class="overflow-x-auto border border-neutral-200 bg-white p-0 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+		>
 			<table class="w-full text-left text-sm">
 				<thead
-					class="border-b border-neutral-200 bg-neutral-50 font-mono text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400"
+					class="border-b border-neutral-200 bg-neutral-50 font-mono text-xs text-neutral-600 dark:border-neutral-800 dark:bg-[#0c0c0e] dark:text-neutral-300"
 				>
 					<tr>
-						<th class="p-3">Parameter</th>
-						<th class="p-3">Type</th>
-						<th class="p-3">Default</th>
-						<th class="p-3">Description</th>
+						<th class="p-3.5">Parameter</th>
+						<th class="p-3.5">Type</th>
+						<th class="p-3.5">Default</th>
+						<th class="p-3.5">Description</th>
 					</tr>
 				</thead>
 				<tbody
-					class="divide-y divide-neutral-200 bg-white dark:divide-neutral-800 dark:bg-neutral-900/40"
+					class="divide-y divide-neutral-200 bg-white dark:divide-neutral-800/80 dark:bg-[#121215]"
 				>
 					{#each queryParams as item (item.param)}
-						<tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
-							<td class="p-3 font-mono font-bold text-primary-600 dark:text-primary-400">
+						<tr class="transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/40">
+							<td class="p-3.5 font-mono font-bold text-primary-600 dark:text-primary-400">
 								{item.param}
 							</td>
-							<td class="p-3 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+							<td class="p-3.5 font-mono text-xs text-neutral-600 dark:text-neutral-400">
 								{item.type}
 							</td>
-							<td class="p-3 font-mono text-xs text-neutral-400 dark:text-neutral-500">
+							<td class="p-3.5 font-mono text-xs text-neutral-500 dark:text-neutral-400">
 								{item.default}
 							</td>
-							<td class="p-3 text-xs text-neutral-700 dark:text-neutral-300">{item.desc}</td>
+							<td class="p-3.5 text-xs text-neutral-800 dark:text-neutral-200">{item.desc}</td>
 						</tr>
 					{/each}
 				</tbody>

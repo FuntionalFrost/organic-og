@@ -1,0 +1,20 @@
+services:
+  organic-og:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: organic-og
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - PUBLIC_APP_URL=http://localhost:3000
+      - OG_SIGNING_SECRET=generate-random-32-char-secret-here
+      - DATABASE_URL=file:/data/local.db
+    volumes:
+      - organic-og-data:/data
+
+volumes:
+  organic-og-data:

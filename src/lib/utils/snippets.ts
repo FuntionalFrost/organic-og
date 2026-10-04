@@ -12,6 +12,18 @@ export function getActiveParams(state: StudioState): Record<string, string> {
 		params.format = 'svg';
 	}
 
+	if (state.pattern && state.pattern !== 'none') {
+		params.pattern = state.pattern;
+	}
+
+	if (state.font && state.font !== 'inter') {
+		params.font = state.font;
+	}
+
+	if (state.bg) params.bg = state.bg;
+	if (state.accent) params.accent = state.accent;
+	if (state.textColor) params.textColor = state.textColor;
+
 	if (state.template === 'minimal') {
 		if (state.description) params.description = state.description;
 		return params;
@@ -38,6 +50,41 @@ export function getActiveParams(state: StudioState): Record<string, string> {
 		if (state.stars) params.stars = state.stars;
 		if (state.forks) params.forks = state.forks;
 		if (state.language) params.language = state.language;
+		return params;
+	}
+
+	if (state.template === 'podcast') {
+		if (state.siteName) params.siteName = state.siteName;
+		if (state.episode) params.episode = state.episode;
+		if (state.host) params.host = state.host;
+		if (state.guest) params.guest = state.guest;
+		if (state.duration) params.duration = state.duration;
+		if (state.logoUrl) params.logoUrl = state.logoUrl;
+		return params;
+	}
+
+	if (state.template === 'event') {
+		if (state.siteName) params.siteName = state.siteName;
+		if (state.eventDate) params.eventDate = state.eventDate;
+		if (state.location) params.location = state.location;
+		if (state.speaker) params.speaker = state.speaker;
+		if (state.logoUrl) params.logoUrl = state.logoUrl;
+		return params;
+	}
+
+	if (state.template === 'quote') {
+		if (state.author) params.author = state.author;
+		if (state.handle) params.handle = state.handle;
+		if (state.role) params.role = state.role;
+		if (state.logoUrl) params.logoUrl = state.logoUrl;
+		return params;
+	}
+
+	if (state.template === 'changelog') {
+		if (state.siteName) params.siteName = state.siteName;
+		if (state.version) params.version = state.version;
+		if (state.items) params.items = state.items;
+		if (state.logoUrl) params.logoUrl = state.logoUrl;
 		return params;
 	}
 
@@ -70,6 +117,23 @@ const response = await fetch("${baseUrl}/api/og?${new URLSearchParams(params).to
 
 const buffer = await response.arrayBuffer();
 fs.writeFileSync('${outputFile}', Buffer.from(buffer));`;
+}
+
+export function generateNextJsSnippet(signedPreviewUrl: string, baseUrl: string): string {
+	return `// Next.js 14/15 App Router - app/layout.tsx or app/page.tsx
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'My Awesome Page',
+  openGraph: {
+    title: 'My Awesome Page',
+    images: ['${baseUrl}${signedPreviewUrl}'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['${baseUrl}${signedPreviewUrl}'],
+  },
+};`;
 }
 
 export function generatePythonSnippet(state: StudioState, apiKey: string, baseUrl: string): string {

@@ -2,7 +2,8 @@ import { chromium } from '@playwright/test';
 import path from 'node:path';
 
 const ARTIFACTS_DIR =
-	'C:/Users/cvgov/.gemini/antigravity/brain/6351655e-390a-4050-9f21-54a190e3b434';
+	process.env.ARTIFACTS_DIR ||
+	'C:/Users/cvgov/.gemini/antigravity/brain/2d97a301-c544-4ec5-9fd6-57e562d242be';
 const BASE_URL = process.env.TEST_URL || 'http://127.0.0.1:5173';
 
 async function runBrowserTest() {
@@ -11,7 +12,8 @@ async function runBrowserTest() {
 	const browser = await chromium.launch({ headless: true });
 	const context = await browser.newContext({
 		viewport: { width: 1440, height: 900 },
-		deviceScaleFactor: 2
+		deviceScaleFactor: 2,
+		colorScheme: 'dark'
 	});
 	const page = await context.newPage();
 
@@ -53,33 +55,30 @@ async function runBrowserTest() {
 
 		await page.getByRole('button', { name: 'Raw (1200×630)', exact: false }).click();
 
-		// 3. Test Template Switching to GitHub & E-Commerce
-		console.log('\n📍 3. Testing Template Switching...');
+		// 3. Test Commercial Template Switching in Studio
+		console.log('\n📍 3. Testing Template Switching (Podcast, Event, Quote, Changelog)...');
 		const templateSelect = page.locator('select').first();
 		if (await templateSelect.isVisible()) {
-			await templateSelect.selectOption('github');
-			await page.waitForTimeout(1000);
-			console.log('  ✅ Switched template to "GitHub Card"');
+			const testTemplates = [
+				{ id: 'podcast', name: 'Podcast Episode', shot: 'browser_podcast_card.png' },
+				{ id: 'event', name: 'Event & Conference', shot: 'browser_event_card.png' },
+				{ id: 'quote', name: 'Social Quote', shot: 'browser_quote_card.png' },
+				{ id: 'changelog', name: 'Changelog Release', shot: 'browser_changelog_card.png' },
+				{ id: 'github', name: 'GitHub Repository', shot: 'browser_github_card.png' },
+				{ id: 'ecommerce', name: 'E-Commerce Product', shot: 'browser_ecommerce_card.png' },
+				{ id: 'saas', name: 'SaaS Card', shot: 'browser_saas_card.png' }
+			];
 
-			await page.screenshot({
-				path: path.join(ARTIFACTS_DIR, 'browser_github_card.png'),
-				fullPage: false
-			});
-			console.log('  📸 Captured screenshot: browser_github_card.png');
-
-			await templateSelect.selectOption('ecommerce');
-			await page.waitForTimeout(1000);
-			console.log('  ✅ Switched template to "E-Commerce Product"');
-
-			await page.screenshot({
-				path: path.join(ARTIFACTS_DIR, 'browser_ecommerce_card.png'),
-				fullPage: false
-			});
-			console.log('  📸 Captured screenshot: browser_ecommerce_card.png');
-
-			await templateSelect.selectOption('saas');
-			await page.waitForTimeout(1000);
-			console.log('  ✅ Switched template back to "SaaS Card"');
+			for (const tpl of testTemplates) {
+				await templateSelect.selectOption(tpl.id);
+				await page.waitForTimeout(800);
+				console.log(`  ✅ Switched template to "${tpl.name}"`);
+				await page.screenshot({
+					path: path.join(ARTIFACTS_DIR, tpl.shot),
+					fullPage: false
+				});
+				console.log(`  📸 Captured screenshot: ${tpl.shot}`);
+			}
 		}
 
 		// 4. Test Command Palette
@@ -94,7 +93,7 @@ async function runBrowserTest() {
 			);
 			if (await paletteInput.isVisible()) {
 				console.log('  ✅ Command Palette opened successfully');
-				await paletteInput.fill('Blog Hero');
+				await paletteInput.fill('Podcast');
 				await page.waitForTimeout(300);
 
 				await page.screenshot({
@@ -148,32 +147,68 @@ async function runBrowserTest() {
 
 		// 6. Test Parameterized Legal Pages
 		console.log('\n📍 6. Testing Parameterized Legal Pages...');
-		const legalRoutes = ['/privacy', '/terms', '/refunds', '/impressum'];
+		const legalRoutes = ['/privacy', '/terms', '/impressum'];
 		for (const route of legalRoutes) {
 			await page.goto(`${BASE_URL}${route}`, { waitUntil: 'domcontentloaded' });
 			const heading = await page.getByRole('heading', { level: 1 }).innerText();
 			console.log(`  ✅ Visited "${route}" — Heading: "${heading}"`);
 		}
 
-		await page.screenshot({
-			path: path.join(ARTIFACTS_DIR, 'browser_legal_privacy.png')
-		});
-		console.log('  📸 Captured screenshot: browser_legal_privacy.png');
+		// 7. Test All 9 Engine Templates (PNG & SVG Dual-Mode + Patterns + Custom Colors)
+		console.log('\n📍 7. Testing 9 Commercial Templates & Customization API...');
+		const allTemplates = [
+			{ name: 'saas', query: 'template=saas&title=SaaS+Scale&badge=Live' },
+			{
+				name: 'blog',
+				query: 'template=blog&title=Deep+Dive+into+Svelte+5&description=Runes+guide'
+			},
+			{ name: 'minimal', query: 'template=minimal&title=Minimal+Aesthetic' },
+			{ name: 'ecommerce', query: 'template=ecommerce&title=Pro+Mechanical+Keyboard&price=$199' },
+			{ name: 'github', query: 'template=github&title=organic-og&stars=2.4k&forks=320' },
+			{
+				name: 'podcast',
+				query:
+					'template=podcast&title=Building+the+Future+of+Web&host=Rich+Harris&guest=Evan+You&duration=52+min&pattern=grid'
+			},
+			{
+				name: 'event',
+				query:
+					'template=event&title=Global+Dev+Summit+2026&eventDate=OCT+15&location=San+Francisco&speaker=Keynotes&pattern=dots'
+			},
+			{
+				name: 'quote',
+				query:
+					'template=quote&title=Svelte+5+runes+changed+how+I+build+frontends+forever&author=Guillermo+Rauch&role=CEO+at+Vercel&pattern=glow'
+			},
+			{
+				name: 'changelog',
+				query:
+					'template=changelog&title=v2.5.0+Release&version=v2.5.0&items=Native+SVG|Zero+WASM|Edge+Cache'
+			}
+		];
 
-		// 7. Test Dual-Mode Rendering (PNG & SVG)
-		console.log('\n📍 7. Testing Dual-Mode Rendering Endpoints...');
-		const pngRes = await page.request.get(
-			`${BASE_URL}/api/og?template=saas&format=png&title=DualMode+Test`
+		for (const t of allTemplates) {
+			// Test PNG
+			const pngRes = await page.request.get(`${BASE_URL}/api/og?${t.query}&format=png`);
+			if (pngRes.status() !== 200 || !pngRes.headers()['content-type']?.includes('image/png')) {
+				throw new Error(`Failed PNG render for ${t.name}: Status ${pngRes.status()}`);
+			}
+			console.log(`  ✅ Template "${t.name}" PNG (200 OK, image/png)`);
+
+			// Test SVG
+			const svgRes = await page.request.get(`${BASE_URL}/api/og?${t.query}&format=svg`);
+			if (svgRes.status() !== 200 || !svgRes.headers()['content-type']?.includes('image/svg+xml')) {
+				throw new Error(`Failed SVG render for ${t.name}: Status ${svgRes.status()}`);
+			}
+			console.log(`  ✅ Template "${t.name}" SVG (200 OK, image/svg+xml)`);
+		}
+
+		// Test Custom Color Overrides & Custom Font
+		const customRes = await page.request.get(
+			`${BASE_URL}/api/og?template=podcast&bg=%230f172a&accent=%23ec4899&textColor=%23f8fafc&font=mono&pattern=grid`
 		);
 		console.log(
-			`  ✅ GET /api/og?format=png — Status: ${pngRes.status()} Content-Type: ${pngRes.headers()['content-type']}`
-		);
-
-		const svgRes = await page.request.get(
-			`${BASE_URL}/api/og?template=saas&format=svg&title=DualMode+Test`
-		);
-		console.log(
-			`  ✅ GET /api/og?format=svg — Status: ${svgRes.status()} Content-Type: ${svgRes.headers()['content-type']}`
+			`  ✅ Custom Colors & Mono Font test — Status: ${customRes.status()} Content-Type: ${customRes.headers()['content-type']}`
 		);
 
 		// 8. Test Site Utilities & SEO
@@ -184,7 +219,7 @@ async function runBrowserTest() {
 			console.log(`  ✅ Visited "${u}" — Status: ${res?.status()}`);
 		}
 
-		console.log('\n🎉 All browser verification steps passed with 0 errors!');
+		console.log('\n🎉 All commercial verification steps passed with 0 errors!');
 	} catch (err) {
 		console.error('❌ Browser verification error:', err);
 		process.exit(1);

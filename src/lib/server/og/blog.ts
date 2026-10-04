@@ -1,20 +1,15 @@
 import type { TemplateProps } from './types';
-import { resolveTheme, createSvgLogo, escapeXml, wrapSvgText } from './helpers';
+import {
+	type ResolvedTheme,
+	createSvgLogo,
+	escapeXml,
+	wrapSvgText,
+	renderSvgMultilineText
+} from './helpers';
 
-export function renderBlogTemplate(props: TemplateProps): string {
-	const theme = resolveTheme(props.theme);
+export function renderBlogTemplate(props: TemplateProps, theme: ResolvedTheme): string {
 	const titleLines = wrapSvgText(props.title, 36, 3);
 	const descLines = props.description ? wrapSvgText(props.description, 58, 2) : [];
-
-	const bgDef = theme.isBrand
-		? `<defs>
-				<linearGradient id="blog-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-					<stop offset="0%" stop-color="#4f46e5" />
-					<stop offset="100%" stop-color="#7c3aed" />
-				</linearGradient>
-			</defs>
-			<rect width="1200" height="630" fill="url(#blog-bg)" />`
-		: `<rect width="1200" height="630" fill="${theme.bg}" />`;
 
 	let currentY = 100;
 	const logoSvg = props.logoDataUri ? createSvgLogo(props.logoDataUri, 568, currentY, 64, 32) : '';
@@ -25,28 +20,35 @@ export function renderBlogTemplate(props: TemplateProps): string {
 		: '';
 	if (props.badge) currentY += 48;
 
-	const titleSvg = `
-		<text x="600" y="${currentY + 20}" font-family="Inter, -apple-system, sans-serif" font-size="56" font-weight="800" fill="${theme.textColor}" letter-spacing="-0.02em" text-anchor="middle">
-			${titleLines.map((line, i) => `<tspan x="600" dy="${i === 0 ? 0 : 66}">${escapeXml(line)}</tspan>`).join('')}
-		</text>
-	`;
+	const titleSvg = renderSvgMultilineText({
+		lines: titleLines,
+		x: 600,
+		y: currentY + 20,
+		dy: 66,
+		fontSize: 56,
+		fontWeight: 800,
+		fill: theme.textColor,
+		letterSpacing: '-0.02em',
+		textAnchor: 'middle'
+	});
 
 	const descYStart = currentY + 20 + titleLines.length * 66 + 10;
-	const descSvg =
-		descLines.length > 0
-			? `
-		<text x="600" y="${descYStart}" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="400" fill="${theme.subtextColor}" text-anchor="middle">
-			${descLines.map((line, i) => `<tspan x="600" dy="${i === 0 ? 0 : 36}">${escapeXml(line)}</tspan>`).join('')}
-		</text>
-	`
-			: '';
+	const descSvg = renderSvgMultilineText({
+		lines: descLines,
+		x: 600,
+		y: descYStart,
+		dy: 36,
+		fontSize: 24,
+		fontWeight: 400,
+		fill: theme.subtextColor,
+		textAnchor: 'middle'
+	});
 
 	const siteNameSvg = props.siteName
 		? `<text x="600" y="560" font-family="Inter, -apple-system, sans-serif" font-size="20" font-weight="700" fill="${theme.subtextColor}" text-anchor="middle">${escapeXml(props.siteName)}</text>`
 		: '';
 
 	return `
-		${bgDef}
 		${logoSvg}
 		${badgeSvg}
 		${titleSvg}

@@ -1,15 +1,10 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
-	import { page } from '$app/state';
 	import {
 		Tabs,
 		Button,
-		Badge,
-		Avatar,
 		Icon,
 		Kbd,
-		DropdownMenu,
-		type MenuItem,
 		CommandPalette,
 		type CommandItem,
 		useShortcuts,
@@ -21,8 +16,6 @@
 		Copy,
 		RefreshCw,
 		Plus,
-		LogOut,
-		Coins,
 		Sliders,
 		Key,
 		BookOpen,
@@ -36,19 +29,16 @@
 		ExternalLink,
 		ShieldCheck,
 		FileText,
-		Receipt,
-		Scale
+		Scale,
+		ShoppingBag
 	} from '@lucide/svelte';
-	import { authClient } from '$lib/utils/authClient';
-	import type { StudioState, ApiKeyItem } from '$lib/types/dashboard';
+	import type { StudioState } from '$lib/types/dashboard';
 	import { getActiveParams } from '$lib/utils/snippets';
 	import StudioTab from '$lib/components/StudioTab.svelte';
 	import KeysTab from '$lib/components/KeysTab.svelte';
 	import AnalyticsTab from '$lib/components/AnalyticsTab.svelte';
 	import DocsTab from '$lib/components/DocsTab.svelte';
-	import AuthGatedState from '$lib/components/AuthGatedState.svelte';
 	import CreateKeyModal from '$lib/components/CreateKeyModal.svelte';
-	import BuyCreditsModal from '$lib/components/BuyCreditsModal.svelte';
 	import OrganicOgLogo from '$lib/components/OrganicOgLogo.svelte';
 
 	let { data } = $props();
@@ -57,10 +47,10 @@
 	let activeTab = $state('studio');
 	let isCommandPaletteOpen = $state(false);
 	const tabItems = [
-		{ label: 'Studio Preview', value: 'studio', icon: Sliders },
-		{ label: 'API Keys & Credits', value: 'keys', icon: Key },
-		{ label: 'Developer Docs', value: 'docs', icon: BookOpen },
-		{ label: 'Analytics & Logs', value: 'analytics', icon: BarChart3 }
+		{ label: 'Studio', value: 'studio', icon: Sliders },
+		{ label: 'API Keys', value: 'keys', icon: Key },
+		{ label: 'Docs', value: 'docs', icon: BookOpen },
+		{ label: 'Analytics', value: 'analytics', icon: BarChart3 }
 	];
 
 	// Global keyboard shortcuts matching Nuxt UI via yaxa-svelte
@@ -89,17 +79,31 @@
 	let studioForm = $state<StudioState>({
 		title: 'Automate OpenGraph Images with SvelteKit & Yaxa',
 		description: 'Generate dynamic, on-brand social assets on edge runtimes in milliseconds.',
-		siteName: 'organic-og.netlify.app',
+		siteName: 'organic-og.vercel.app',
 		badge: 'Production Ready',
 		logoUrl: 'https://avatars.githubusercontent.com/u/28706372?v=4',
 		theme: 'brand',
 		template: 'saas',
 		format: 'png',
+		pattern: 'none',
+		font: 'inter',
 		price: '€129.00',
 		rating: '4.9 ★★★★★',
 		stars: '14.2k',
 		forks: '1.8k',
-		language: 'TypeScript'
+		language: 'TypeScript',
+		episode: 'EPISODE #42',
+		host: 'Rich Harris',
+		guest: 'Evan You',
+		duration: '52 MIN',
+		eventDate: 'OCTOBER 15, 2026',
+		location: 'San Francisco & Virtual',
+		speaker: 'Keynote Speakers',
+		author: 'Guillermo Rauch',
+		handle: '@rauchg',
+		role: 'CEO at Vercel',
+		version: 'v2.5.0 Release',
+		items: 'Native SVG Engine | Zero WASM Resvg | Distributed Edge Caching'
 	});
 
 	let signedPreviewUrl = $state('');
@@ -145,13 +149,6 @@
 
 	// Modals
 	let isCreateKeyOpen = $state(false);
-	let isBuyCreditsOpen = $state(false);
-	let selectedKeyForPurchase = $state<ApiKeyItem | null>(null);
-
-	function openBuyCreditsModal(key: ApiKeyItem) {
-		selectedKeyForPurchase = key;
-		isBuyCreditsOpen = true;
-	}
 
 	async function revokeApiKey(id: string) {
 		try {
@@ -171,14 +168,11 @@
 		try {
 			const res = await fetch(`/api/keys/${keyId}/test`, { method: 'POST' });
 			if (res.ok) {
-				const resData = await res.json();
-				toast.success(
-					`Test render generated! 1 credit deducted (Remaining: ${resData.creditsRemaining})`
-				);
+				toast.success('Test render generated successfully! (Unlimited FOSS Token)');
 				await invalidateAll();
 			} else {
 				const errData = await res.json().catch(() => ({}));
-				throw new Error(errData.message || 'Insufficient credits or invalid key.');
+				throw new Error(errData.message || 'Test render failed.');
 			}
 		} catch (err: unknown) {
 			toast.error((err instanceof Error ? err.message : 'Error') || 'Test render failed');
@@ -223,91 +217,11 @@
 		}
 	}
 
-	async function handleSignIn() {
-		await authClient.signIn.social({
-			provider: 'github',
-			callbackURL: window.location.href
-		});
-	}
-
-	async function handleSignOut() {
-		await authClient.signOut();
-		window.location.reload();
-	}
-
-	const userMenuItems: MenuItem[] = $derived([
-		{
-			id: 'user-header',
-			label: `${data.user?.name || data.user?.email || 'User'} · ${data.user?.creditsRemaining ?? 10} credits`,
-			disabled: true
-		},
-		{
-			id: 'user-sep1',
-			label: '',
-			separator: true
-		},
-		{
-			id: 'menu-studio',
-			label: 'Studio Preview',
-			icon: Sliders,
-			shortcut: '1',
-			onSelect: () => {
-				activeTab = 'studio';
-			}
-		},
-		{
-			id: 'menu-keys',
-			label: 'API Keys & Credits',
-			icon: Key,
-			shortcut: '2',
-			onSelect: () => {
-				activeTab = 'keys';
-			}
-		},
-		{
-			id: 'menu-docs',
-			label: 'Developer Docs',
-			icon: BookOpen,
-			shortcut: '3',
-			onSelect: () => {
-				activeTab = 'docs';
-			}
-		},
-		{
-			id: 'menu-analytics',
-			label: 'Analytics & Logs',
-			icon: BarChart3,
-			shortcut: '4',
-			onSelect: () => {
-				activeTab = 'analytics';
-			}
-		},
-		{
-			id: 'user-sep2',
-			label: '',
-			separator: true
-		},
-		{
-			id: 'sign-out',
-			label: 'Sign Out',
-			icon: LogOut,
-			destructive: true,
-			onSelect: () => handleSignOut()
-		}
-	]);
-
-	$effect(() => {
-		if (page.url.searchParams.get('status') === 'success') {
-			toast.success('Payment Successful! Your API credits have been added to your balance.');
-			invalidateAll();
-		}
-	});
-
 	const commandItems: CommandItem[] = [
 		// Navigation
 		{
 			id: 'nav-studio',
-			label: 'Studio Preview',
+			label: 'Studio',
 			description: 'Interactive OpenGraph canvas and multi-platform previewer',
 			icon: Sliders,
 			shortcut: '1',
@@ -318,8 +232,8 @@
 		},
 		{
 			id: 'nav-keys',
-			label: 'API Keys & Credits',
-			description: 'Manage HMAC signing keys, top up credits, and review allowances',
+			label: 'API Tokens & Telemetry',
+			description: 'Manage HMAC signing keys and monitor API usage',
 			icon: Key,
 			shortcut: '2',
 			group: 'Navigation',
@@ -403,12 +317,60 @@
 			id: 'tpl-ecommerce',
 			label: 'E-Commerce Product Template',
 			description: 'Product showcase with pricing in € and rating',
-			icon: Coins,
+			icon: ShoppingBag,
 			group: 'Templates',
 			onSelect: () => {
 				studioForm.template = 'ecommerce';
 				activeTab = 'studio';
 				toast.success('Applied E-Commerce template');
+			}
+		},
+		{
+			id: 'tpl-podcast',
+			label: 'Podcast & Episode Template',
+			description: 'Show card with host, guest, duration & audio waveform',
+			icon: Sparkles,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'podcast';
+				activeTab = 'studio';
+				toast.success('Applied Podcast template');
+			}
+		},
+		{
+			id: 'tpl-event',
+			label: 'Event & Conference Template',
+			description: 'Conference banner with date, venue & speaker lineup',
+			icon: LayoutTemplate,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'event';
+				activeTab = 'studio';
+				toast.success('Applied Event template');
+			}
+		},
+		{
+			id: 'tpl-quote',
+			label: 'Social Quote / Testimonial Template',
+			description: 'Quote card with author attribution and verified check',
+			icon: FileText,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'quote';
+				activeTab = 'studio';
+				toast.success('Applied Quote template');
+			}
+		},
+		{
+			id: 'tpl-changelog',
+			label: 'Changelog Release Template',
+			description: 'Product update card with version badge and bullet highlights',
+			icon: Sparkles,
+			group: 'Templates',
+			onSelect: () => {
+				studioForm.template = 'changelog';
+				activeTab = 'studio';
+				toast.success('Applied Changelog template');
 			}
 		},
 
@@ -512,14 +474,6 @@
 			href: '/terms'
 		},
 		{
-			id: 'doc-refunds',
-			label: 'Cancellation & Refund Policy',
-			description: '14-day money-back guarantee terms',
-			icon: Receipt,
-			group: 'Legal & Links',
-			href: '/refunds'
-		},
-		{
 			id: 'doc-impressum',
 			label: 'Impressum / Legal Notice',
 			description: 'Mandatory provider identification pursuant to § 5 TMG',
@@ -539,75 +493,88 @@
 </script>
 
 <div
-	class="flex min-h-screen flex-col bg-white text-neutral-900 transition-colors dark:bg-neutral-950 dark:text-neutral-100"
+	class="flex min-h-screen flex-col bg-neutral-50 text-neutral-900 transition-colors dark:bg-[#09090b] dark:text-neutral-100"
 >
-	<!-- Navbar Header -->
+	<!-- Modern Sticky Navbar Header (Single-line, Zero Overflow) -->
 	<header
-		class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-8 py-3.5 backdrop-blur-md transition-colors dark:border-neutral-800 dark:bg-neutral-950/80"
+		class="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200/80 bg-white/90 px-4 backdrop-blur-md transition-colors sm:px-6 dark:border-neutral-800/80 dark:bg-[#09090b]/90"
 	>
-		<div class="flex items-center gap-6">
-			<OrganicOgLogo size="md" />
+		<!-- Left: Brand Logo & Navigation Segment -->
+		<div class="flex items-center gap-3 sm:gap-5">
+			<OrganicOgLogo size="sm" />
 			<div class="w-auto">
 				<Tabs items={tabItems} bind:value={activeTab} variant="segmented" />
 			</div>
 		</div>
 
-		<!-- Header Actions & Auth Widget -->
-		<div class="flex items-center gap-3">
+		<!-- Right: Quick Actions, Theme Toggle & Auth -->
+		<div class="flex items-center gap-1.5 sm:gap-2.5">
 			<!-- Command Palette Launcher -->
 			<Button
 				color="neutral"
 				variant="outline"
-				size="sm"
-				class="gap-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+				size="xs"
+				class="gap-1.5 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
 				onclick={() => (isCommandPaletteOpen = true)}
 				aria-label="Open Command Palette"
 			>
 				<Icon icon={Search} size="xs" />
-				<span class="hidden text-xs md:inline">Search commands...</span>
-				<Kbd value="⌘K" size="xs" class="ml-0.5 hidden sm:inline-block" />
+				<span class="hidden text-xs lg:inline">Search</span>
+				<Kbd value="⌘K" size="xs" class="hidden sm:inline-block" />
 			</Button>
 
 			{#if activeTab === 'studio'}
-				<Button color="neutral" variant="outline" size="sm" class="gap-1.5" onclick={downloadImage}>
-					<Icon icon={Download} size="xs" />
-					<span>Download PNG</span>
-				</Button>
-				<Button color="primary" variant="solid" size="sm" class="gap-1.5" onclick={copyMetaTag}>
-					<Icon icon={Copy} size="xs" />
-					<span>Copy Meta Tag</span>
-				</Button>
-			{:else if activeTab === 'keys' && data.user}
 				<Button
 					color="neutral"
 					variant="outline"
-					size="sm"
-					class="gap-1.5"
-					onclick={() => invalidateAll()}
+					size="xs"
+					class="hidden gap-1 md:inline-flex"
+					onclick={downloadImage}
 				>
-					<Icon icon={RefreshCw} size="xs" />
-					<span>Refresh</span>
+					<Icon icon={Download} size="xs" />
+					<span>Download</span>
 				</Button>
 				<Button
 					color="primary"
 					variant="solid"
-					size="sm"
-					class="gap-1.5"
-					onclick={() => (isCreateKeyOpen = true)}
+					size="xs"
+					class="gap-1 font-semibold shadow-xs"
+					onclick={copyMetaTag}
 				>
-					<Icon icon={Plus} size="xs" />
-					<span>Create API Key</span>
+					<Icon icon={Copy} size="xs" />
+					<span class="hidden sm:inline">Copy Tag</span>
 				</Button>
-			{:else if activeTab === 'analytics' && data.user}
+			{:else if activeTab === 'keys'}
 				<Button
 					color="neutral"
 					variant="outline"
-					size="sm"
-					class="gap-1.5"
+					size="xs"
+					class="gap-1"
 					onclick={() => invalidateAll()}
 				>
 					<Icon icon={RefreshCw} size="xs" />
-					<span>Refresh</span>
+					<span class="hidden sm:inline">Refresh</span>
+				</Button>
+				<Button
+					color="primary"
+					variant="solid"
+					size="xs"
+					class="gap-1 shadow-xs"
+					onclick={() => (isCreateKeyOpen = true)}
+				>
+					<Icon icon={Plus} size="xs" />
+					<span>Create Key</span>
+				</Button>
+			{:else if activeTab === 'analytics'}
+				<Button
+					color="neutral"
+					variant="outline"
+					size="xs"
+					class="gap-1"
+					onclick={() => invalidateAll()}
+				>
+					<Icon icon={RefreshCw} size="xs" />
+					<span class="hidden sm:inline">Refresh</span>
 				</Button>
 			{/if}
 
@@ -615,7 +582,7 @@
 			<Button
 				color="neutral"
 				variant="outline"
-				size="sm"
+				size="xs"
 				square
 				onclick={() => colorMode.toggle()}
 				title={colorMode.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -628,109 +595,60 @@
 				{/if}
 			</Button>
 
-			<!-- User Auth Profile Widget -->
+			<!-- GitHub Repository Link -->
 			<div
-				class="flex items-center gap-2.5 border-l border-neutral-200 pl-3 dark:border-neutral-800"
+				class="flex items-center gap-2 border-l border-neutral-200/80 pl-2 sm:gap-2.5 sm:pl-3 dark:border-neutral-800"
 			>
-				{#if data.user}
-					<Badge
-						color="primary"
-						variant="subtle"
-						size="sm"
-						class="hidden items-center gap-1 font-mono sm:flex"
-					>
-						<Icon icon={Coins} size="xs" class="text-primary-500 dark:text-primary-400" />
-						<span>{data.user.creditsRemaining ?? 10} credits</span>
-					</Badge>
-					<DropdownMenu items={userMenuItems}>
-						{#snippet trigger()}
-							<button
-								type="button"
-								class="flex cursor-pointer items-center gap-2 rounded-lg p-1 transition-colors hover:bg-neutral-100 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 dark:hover:bg-neutral-800"
-								aria-label="User Account Menu"
-							>
-								{#if data.user.image}
-									<Avatar src={data.user.image} alt={data.user.name || 'User'} size="xs" />
-								{:else}
-									<Avatar alt={data.user.name || 'User'} size="xs" />
-								{/if}
-								<span
-									class="max-w-[120px] truncate text-xs font-medium text-neutral-700 dark:text-neutral-300"
-								>
-									{data.user.name || data.user.email}
-								</span>
-								<Icon name="chevron-down" size="xs" class="text-neutral-400" />
-							</button>
-						{/snippet}
-					</DropdownMenu>
-				{:else}
-					<Button color="neutral" variant="outline" size="sm" class="gap-2" onclick={handleSignIn}>
-						<Icon name="github" size="xs" />
-						<span>Sign in with GitHub</span>
-					</Button>
-				{/if}
+				<a
+					href="https://github.com/FunctionalFrost/organic-og"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200/80 bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white"
+				>
+					<svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+						<path
+							fill-rule="evenodd"
+							clip-rule="evenodd"
+							d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+						/>
+					</svg>
+					<span class="hidden sm:inline">GitHub</span>
+				</a>
 			</div>
 		</div>
 	</header>
 
-	<!-- Active Tab Body -->
-	{#if activeTab === 'studio'}
-		<StudioTab
-			bind:studioState={studioForm}
-			{signedPreviewUrl}
-			{signatureToken}
-			{isRendering}
-			baseUrl={data.baseUrl}
-		/>
-	{:else if activeTab === 'keys'}
-		{#if data.user}
-			<KeysTab
-				keysList={data.keys}
-				onopenBuyCredits={openBuyCreditsModal}
-				ontestRender={testRenderWithKey}
-				onrevokeKey={revokeApiKey}
+	<!-- Tab Panels -->
+	<div class="flex flex-1 flex-col">
+		{#if activeTab === 'studio'}
+			<StudioTab
+				bind:studioState={studioForm}
+				{signedPreviewUrl}
+				{signatureToken}
+				{isRendering}
+				baseUrl={data.baseUrl}
 			/>
-		{:else}
-			<AuthGatedState
-				icon={Key}
-				iconColorClass="text-primary-400"
-				title="API Keys & Credit Balances"
-				description="Sign in with GitHub to generate programmatic API keys, purchase credit bundles, and receive 10 free renders."
-				buttonLabel="Continue with GitHub (+10 Credits)"
-				onlogin={handleSignIn}
+		{:else if activeTab === 'keys'}
+			<KeysTab keysList={data.keys} ontestRender={testRenderWithKey} onrevokeKey={revokeApiKey} />
+		{:else if activeTab === 'docs'}
+			<DocsTab
+				studioState={studioForm}
+				apiKeyPrefix={data.keys[0]?.prefix || 'og_live_demo123456789'}
+				{signedPreviewUrl}
+				baseUrl={data.baseUrl}
 			/>
-		{/if}
-	{:else if activeTab === 'docs'}
-		<DocsTab
-			studioState={studioForm}
-			apiKeyPrefix={data.keys?.[0]?.prefix ?? 'YOUR_API_KEY'}
-			{signedPreviewUrl}
-			baseUrl={data.baseUrl}
-		/>
-	{:else if activeTab === 'analytics'}
-		{#if data.user}
+		{:else if activeTab === 'analytics'}
 			<AnalyticsTab analyticsData={data.analytics} />
-		{:else}
-			<AuthGatedState
-				icon={Sparkles}
-				iconColorClass="text-emerald-400"
-				title="Private Usage Analytics"
-				description="Sign in with GitHub to view your real-time cache efficiency, template performance, and API request audit logs."
-				buttonLabel="Sign in with GitHub"
-				onlogin={handleSignIn}
-			/>
 		{/if}
-	{/if}
-
-	<!-- Command Palette -->
-	<CommandPalette
-		bind:open={isCommandPaletteOpen}
-		items={commandItems}
-		placeholder="Search templates, presets, actions, or shortcuts..."
-	/>
-
-	<!-- Modals -->
-	<CreateKeyModal bind:open={isCreateKeyOpen} oncreated={() => invalidateAll()} />
-
-	<BuyCreditsModal bind:open={isBuyCreditsOpen} apiKey={selectedKeyForPurchase} />
+	</div>
 </div>
+
+<!-- Command Palette Modal -->
+<CommandPalette
+	bind:open={isCommandPaletteOpen}
+	items={commandItems}
+	placeholder="Search templates, presets, actions, or shortcuts..."
+/>
+
+<!-- Modals -->
+<CreateKeyModal bind:open={isCreateKeyOpen} oncreated={() => invalidateAll()} />

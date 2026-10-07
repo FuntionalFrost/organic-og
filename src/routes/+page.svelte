@@ -9,7 +9,8 @@
 		type CommandItem,
 		useShortcuts,
 		useColorMode,
-		toast
+		toast,
+		theme
 	} from 'yaxa-svelte';
 	import {
 		Download,
@@ -456,6 +457,129 @@
 			onSelect: () => colorMode.toggle()
 		},
 
+		// Accents & Styling
+		{
+			id: 'accent-svelte',
+			label: 'Svelte Orange Accent',
+			description: 'Vibrant flame orange brand accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('svelte');
+				toast.success('Accent set to Svelte Orange');
+			}
+		},
+		{
+			id: 'accent-emerald',
+			label: 'Emerald Organic Accent',
+			description: 'Clean nature-inspired emerald green accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('emerald');
+				toast.success('Accent set to Emerald Green');
+			}
+		},
+		{
+			id: 'accent-sky',
+			label: 'Sky Blue Accent',
+			description: 'Bright modern sky blue accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('sky');
+				toast.success('Accent set to Sky Blue');
+			}
+		},
+		{
+			id: 'accent-violet',
+			label: 'Violet Purple Accent',
+			description: 'Electric violet deep indigo accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('violet');
+				toast.success('Accent set to Violet');
+			}
+		},
+		{
+			id: 'accent-rose',
+			label: 'Rose Pink Accent',
+			description: 'Warm modern rose magenta accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('rose');
+				toast.success('Accent set to Rose');
+			}
+		},
+		{
+			id: 'accent-amber',
+			label: 'Amber Gold Accent',
+			description: 'Radiant warm amber gold accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('amber');
+				toast.success('Accent set to Amber');
+			}
+		},
+		{
+			id: 'accent-indigo',
+			label: 'Indigo Classic Accent',
+			description: 'Deep high-tech indigo accent',
+			icon: Palette,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setAccent('indigo');
+				toast.success('Accent set to Indigo');
+			}
+		},
+		{
+			id: 'radius-rounded',
+			label: 'Rounded Corners (Default)',
+			description: 'Harmonic 0.5rem radius scale across all UI primitives',
+			icon: Sparkles,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setRadius('default');
+				toast.success('Corner radius set to Rounded');
+			}
+		},
+		{
+			id: 'radius-subtle',
+			label: 'Subtle Corners',
+			description: 'Crisp compact 0.25rem radius scale',
+			icon: Sparkles,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setRadius('subtle');
+				toast.success('Corner radius set to Subtle');
+			}
+		},
+		{
+			id: 'radius-pill',
+			label: 'Pill Curvature',
+			description: 'Ultra-rounded harmonic pill radius scale',
+			icon: Sparkles,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setRadius('pill');
+				toast.success('Corner radius set to Pill');
+			}
+		},
+		{
+			id: 'radius-sharp',
+			label: 'Sharp Rectangular',
+			description: 'Brutalist 0px border radius across all cards and inputs',
+			icon: Sparkles,
+			group: 'Accents & Styling',
+			onSelect: () => {
+				theme.setRadius('sharp');
+				toast.success('Corner radius set to Sharp');
+			}
+		},
+
 		// Legal & Links
 		{
 			id: 'doc-privacy',
@@ -495,9 +619,9 @@
 <div
 	class="flex min-h-screen flex-col bg-neutral-50 text-neutral-900 transition-colors dark:bg-[#09090b] dark:text-neutral-100"
 >
-	<!-- Modern Sticky Navbar Header (Single-line, Zero Overflow) -->
+	<!-- Modern Sticky Navbar Header with Yaxa Glassmorphism -->
 	<header
-		class="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200/80 bg-white/90 px-4 backdrop-blur-md transition-colors sm:px-6 dark:border-neutral-800/80 dark:bg-[#09090b]/90"
+		class="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200/80 yaxa-glass px-4 transition-colors sm:px-6 dark:border-neutral-800/80"
 	>
 		<!-- Left: Brand Logo & Navigation Segment -->
 		<div class="flex items-center gap-3 sm:gap-5">
@@ -593,6 +717,32 @@
 				{:else}
 					<Icon icon={Moon} size="xs" class="text-neutral-700" />
 				{/if}
+			</Button>
+
+			<!-- Dynamic Brand Accent Selector Button -->
+			<Button
+				color="neutral"
+				variant="outline"
+				size="xs"
+				square
+				onclick={() => {
+					const accents = [
+						'svelte',
+						'emerald',
+						'sky',
+						'violet',
+						'rose',
+						'amber',
+						'indigo'
+					] as const;
+					const nextIndex = (accents.indexOf(theme.accent) + 1) % accents.length;
+					theme.setAccent(accents[nextIndex]);
+					toast.success(`Theme accent: ${accents[nextIndex].toUpperCase()}`);
+				}}
+				title={`Current Accent: ${theme.accent} (click to cycle)`}
+				aria-label="Cycle Accent Color"
+			>
+				<Icon icon={Palette} size="xs" class="text-primary-500" />
 			</Button>
 
 			<!-- GitHub Repository Link -->

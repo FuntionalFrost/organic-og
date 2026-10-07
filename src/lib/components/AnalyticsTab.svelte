@@ -96,7 +96,7 @@
 
 	<!-- Template Breakdown Grid -->
 	<Card
-		class="space-y-4 border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
+		class="space-y-4 border border-neutral-200 bg-white p-6 yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
 	>
 		<div class="flex items-center justify-between">
 			<h3
@@ -150,7 +150,7 @@
 			Recent Render Activity (Last 15)
 		</h3>
 		<Card
-			class="overflow-hidden border border-neutral-200 bg-white p-0 shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
+			class="overflow-hidden border border-neutral-200 bg-white p-0 yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
 		>
 			<DataTable
 				data={analyticsData?.recentLogs || []}

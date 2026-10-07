@@ -269,7 +269,7 @@
 		</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<Card
-				class="space-y-3 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+				class="space-y-3 border border-neutral-200 bg-white p-5 yaxa-surface-elevated dark:border-neutral-800 dark:bg-[#121215]"
 			>
 				<div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white">
 					<span class="text-amber-500 dark:text-amber-400">🔑</span>
@@ -287,7 +287,7 @@
 			</Card>
 
 			<Card
-				class="space-y-3 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+				class="space-y-3 border border-neutral-200 bg-white p-5 yaxa-surface-elevated dark:border-neutral-800 dark:bg-[#121215]"
 			>
 				<div class="flex items-center gap-2 font-semibold text-neutral-900 dark:text-white">
 					<span class="text-emerald-500 dark:text-emerald-400">🛡️</span>
@@ -319,7 +319,7 @@
 		</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<Card
-				class="space-y-2 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+				class="space-y-2 border border-neutral-200 bg-white p-5 yaxa-surface-elevated dark:border-neutral-800 dark:bg-[#121215]"
 			>
 				<div class="flex items-center gap-3">
 					<Badge color="success" variant="solid" size="xs" class="font-mono font-bold">GET</Badge>
@@ -334,7 +334,7 @@
 			</Card>
 
 			<Card
-				class="space-y-2 border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+				class="space-y-2 border border-neutral-200 bg-white p-5 yaxa-surface-elevated dark:border-neutral-800 dark:bg-[#121215]"
 			>
 				<div class="flex items-center gap-3">
 					<Badge color="primary" variant="solid" size="xs" class="font-mono font-bold">POST</Badge>
@@ -358,7 +358,7 @@
 			URL Parameters Specification
 		</h2>
 		<Card
-			class="overflow-x-auto border border-neutral-200 bg-white p-0 shadow-sm dark:border-neutral-800 dark:bg-[#121215]"
+			class="overflow-x-auto border border-neutral-200 bg-white p-0 yaxa-surface-elevated dark:border-neutral-800 dark:bg-[#121215]"
 		>
 			<table class="w-full text-left text-sm">
 				<thead

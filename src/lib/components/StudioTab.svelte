@@ -219,7 +219,7 @@
 <main class="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8 lg:grid-cols-12">
 	<!-- Controls Column -->
 	<Card
-		class="h-fit space-y-4 border border-neutral-200 bg-white p-6 shadow-sm lg:col-span-5 dark:border-neutral-800/90 dark:bg-[#121215]"
+		class="h-fit space-y-4 border border-neutral-200 bg-white p-6 yaxa-surface-elevated lg:col-span-5 dark:border-neutral-800/90 dark:bg-[#121215]"
 	>
 		<div class="flex items-center justify-between">
 			<h2
@@ -249,7 +249,7 @@
 					<button
 						type="button"
 						onclick={() => applyPreset(preset)}
-						class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all {studioState.template ===
+						class="inline-flex yaxa-press cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all {studioState.template ===
 							preset.template && studioState.theme === preset.theme
 							? 'border-primary-500 bg-primary-500/10 font-semibold text-primary-600 shadow-2xs ring-1 ring-primary-500/40 dark:border-primary-500/60 dark:bg-primary-950/60 dark:text-primary-300'
 							: 'border-neutral-200/90 bg-neutral-50/70 text-neutral-700 hover:border-neutral-300 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-300 dark:hover:border-neutral-700 dark:hover:bg-neutral-800'}"
@@ -552,7 +552,7 @@
 				{#each previewModes as m (m.value)}
 					<button
 						type="button"
-						class="flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {previewMode ===
+						class="flex yaxa-press cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {previewMode ===
 						m.value
 							? 'bg-white text-neutral-900 shadow-xs dark:bg-neutral-800 dark:text-white'
 							: 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'}"
@@ -588,14 +588,14 @@
 			</div>
 		</div>
 
-		<!-- Simulator Canvas Container -->
+		<!-- Simulator Canvas Container with Yaxa Mesh Glow & Subtle Grain -->
 		<div
-			class="flex w-full items-center justify-center rounded-xl border border-neutral-200 bg-neutral-100/70 py-4 dark:border-neutral-800/80 dark:bg-black/60"
+			class="flex w-full items-center justify-center rounded-xl border border-neutral-200/80 bg-neutral-100/70 yaxa-mesh-glow yaxa-grain p-4 transition-all sm:p-6 dark:border-neutral-800/80 dark:bg-black/70"
 		>
 			<!-- 1. Raw Canvas Mode -->
 			{#if previewMode === 'canvas'}
 				<div
-					class="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
+					class="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-neutral-900"
 				>
 					{#if signedPreviewUrl}
 						<img

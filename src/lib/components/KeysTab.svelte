@@ -62,7 +62,7 @@
 	</div>
 
 	<Card
-		class="overflow-hidden border border-neutral-200 bg-white shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
+		class="overflow-hidden border border-neutral-200 bg-white yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
 	>
 		<DataTable
 			data={keysList}

@@ -1,17 +1,15 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-@source '../../node_modules/yaxa-svelte';
-@import 'yaxa-svelte/yaxa.css';
+@import 'yaxa-svelte/theme.css';
+@source '../../node_modules/yaxa-svelte/dist/**/*.{js,svelte}';
 
 @theme {
 	--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Ensure ultra-high contrast dark theme token defaults */
+/* Ultra-high contrast design token defaults */
 :root {
 	--yaxa-bg: #ffffff;
 	--yaxa-fg: #0f172a;
@@ -37,63 +35,56 @@
 	color: #f8fafc;
 }
 
-/* Ensure MetricCard and KPI values match the site's dark mode text-white standard */
-.dark .text-2xl.tracking-tight,
-.dark .rounded-xl .text-2xl.font-bold,
-.dark [data-yaxa-card] .text-2xl.font-bold {
-	color: #ffffff !important;
-}
-
-/* High-contrast Form Labels and Text */
+/* High-contrast Form Labels and Text with Dynamic Accent Focus */
 .dark label {
-	color: #e2e8f0 !important;
+	color: #e2e8f0;
 }
 
 .dark input,
 .dark textarea,
 .dark select {
-	background-color: #0c0c0e !important;
-	border-color: #27272a !important;
-	color: #f8fafc !important;
+	background-color: #0c0c0e;
+	border-color: #27272a;
+	color: #f8fafc;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-	color: #71717a !important;
+	color: #71717a;
 }
 
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
-	border-color: #f97316 !important;
+	border-color: var(--color-primary-500, #f97316);
 	outline: none;
 }
 
 /* Dark mode table & table header styling */
 .dark table thead {
-	background-color: #121215 !important;
-	border-color: #27272a !important;
+	background-color: #121215;
+	border-color: #27272a;
 }
 
 .dark table thead th {
-	color: #cbd5e1 !important;
+	color: #cbd5e1;
 }
 
 .dark table tbody {
-	background-color: #0c0c0e !important;
+	background-color: #0c0c0e;
 }
 
 .dark table tbody tr {
-	border-color: #1e1e24 !important;
+	border-color: #1e1e24;
 }
 
 .dark table tbody td {
-	color: #e2e8f0 !important;
+	color: #e2e8f0;
 }
 
 /* Pre / Code snippets dark mode styling */
 .dark pre {
-	background-color: #08080a !important;
-	border-color: #27272a !important;
-	color: #e2e8f0 !important;
+	background-color: #08080a;
+	border-color: #27272a;
+	color: #e2e8f0;
 }

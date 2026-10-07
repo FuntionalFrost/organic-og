@@ -1,19 +1,35 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { OG_SIGNING_SECRET } from '$app/env/private';
 import { eq, sql } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { apiKeys, renderLogs } from '$lib/server/db/schema';
+import { db } from '#lib/server/db/index.js';
+import { apiKeys, renderLogs } from '#lib/server/db/schema.js';
 import {
 	getTemplateSvg,
 	type TemplateName,
 	type TemplateProps,
 	type PatternType,
 	type FontType
-} from '$lib/server/og';
-import { renderSvgToPng } from '$lib/server/og/resvg';
-import { createCanonicalQueryString, sha256, verifyHmacSignature } from '$lib/server/og/security';
-import { fetchRemoteImageAsDataUri } from '$lib/server/og/imageFetcher';
-import { getCachedImage, setCachedImage } from '$lib/server/og/cache';
+} from '#lib/server/og/index.js';
+import { renderSvgToPng } from '#lib/server/og/resvg.js';
+import {
+	createCanonicalQueryString,
+	sha256,
+	verifyHmacSignature
+} from '#lib/server/og/security.js';
+import { fetchRemoteImageAsDataUri } from '#lib/server/og/imageFetcher.js';
+import { getCachedImage, setCachedImage } from '#lib/server/og/cache.js';
+
+export const OPTIONS: RequestHandler = async () => {
+	return new Response(null, {
+		status: 204,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+			'Access-Control-Max-Age': '86400'
+		}
+	});
+};
 
 export const GET: RequestHandler = async ({ url, request }) => {
 	try {
@@ -23,9 +39,8 @@ export const GET: RequestHandler = async ({ url, request }) => {
 		}
 
 		const format = (query.format as string)?.toLowerCase() === 'svg' ? 'svg' : 'png';
-
 		const secret =
-			env.OG_SIGNING_SECRET ||
+			OG_SIGNING_SECRET ||
 			process.env.OG_SIGNING_SECRET ||
 			(process.env.NODE_ENV !== 'production' ? 'fallback-secret-key-32-chars-min' : '');
 
@@ -92,6 +107,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			const headers = new Headers({
 				'Content-Type': cached.contentType,
 				'x-cache': 'HIT',
+				'Access-Control-Allow-Origin': '*',
 				'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
 				'CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
 				'Vercel-CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
@@ -195,6 +211,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			'Content-Type': responseContentType,
 			'x-cache': 'MISS',
 			'x-engine': 'organic-og-foss',
+			'Access-Control-Allow-Origin': '*',
 			'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
 			'CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
 			'Vercel-CDN-Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400'

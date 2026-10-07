@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Modal, Button, Input, FormField, useClipboard, toast } from 'yaxa-svelte';
-	import type { ApiKeyItem } from '$lib/types/dashboard';
+	import type { ApiKeyItem } from '#lib/types/dashboard.js';
 
 	interface Props {
 		open?: boolean;

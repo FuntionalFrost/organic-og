@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Card, Button, ButtonGroup, Badge, CodeBlock } from 'yaxa-svelte';
-	import type { StudioState } from '$lib/types/dashboard';
+	import type { StudioState } from '#lib/types/dashboard.js';
 	import {
 		generateCurlSnippet,
 		generateTypeScriptSnippet,
@@ -8,7 +8,7 @@
 		generatePythonSnippet,
 		generateSvelteKitSnippet,
 		generateMarkdownSnippet
-	} from '$lib/utils/snippets';
+	} from '#lib/utils/snippets.js';
 
 	interface Props {
 		studioState: StudioState;

@@ -1,7 +1,7 @@
-import { json, error, type RequestHandler } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { error, type RequestHandler } from '@sveltejs/kit';
+import { OG_SIGNING_SECRET } from '$app/env/private';
 import { z } from 'zod';
-import { createCanonicalQueryString, generateHmacSignature } from '$lib/server/og/security';
+import { createCanonicalQueryString, generateHmacSignature } from '#lib/server/og/security.js';
 
 const bodySchema = z.object({
 	params: z.record(z.string(), z.any())
@@ -11,9 +11,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const body = await request.json();
 		const { params } = bodySchema.parse(body);
-
 		const secret =
-			env.OG_SIGNING_SECRET ||
+			OG_SIGNING_SECRET ||
 			process.env.OG_SIGNING_SECRET ||
 			(process.env.NODE_ENV !== 'production' ? 'fallback-secret-key-32-chars-min' : '');
 
@@ -24,7 +23,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const canonical = createCanonicalQueryString(params);
 		const signature = await generateHmacSignature(canonical, secret);
 
-		return json({
+		return Response.json({
 			signature,
 			canonical,
 			signedUrl: `/api/og?${canonical}&s=${signature}`

@@ -1,6 +1,7 @@
 // src/lib/server/og/cache.ts
 import { Redis } from '@upstash/redis';
-import { env } from '$env/dynamic/private';
+
+import { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN } from '$app/env/private';
 
 export interface CachedImage {
 	body: Uint8Array | string;
@@ -17,8 +18,8 @@ let redisClient: Redis | null = null;
 function getRedisClient(): Redis | null {
 	if (redisClient !== null) return redisClient;
 
-	const url = env.UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_URL;
-	const token = env.UPSTASH_REDIS_REST_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+	const url = UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_URL;
+	const token = UPSTASH_REDIS_REST_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 
 	if (url && token) {
 		try {

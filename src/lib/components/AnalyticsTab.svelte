@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Card, DataTable, Badge, Progress, MetricCard } from 'yaxa-svelte';
-	import type { AnalyticsData } from '$lib/types/dashboard';
+	import type { AnalyticsData } from '#lib/types/dashboard.js';
 
 	interface Props {
 		analyticsData: AnalyticsData | null;

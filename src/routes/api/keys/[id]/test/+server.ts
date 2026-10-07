@@ -1,8 +1,8 @@
-import { json, error, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
-import { db } from '$lib/server/db';
-import { apiKeys, renderLogs } from '$lib/server/db/schema';
+import { db } from '#lib/server/db/index.js';
+import { apiKeys, renderLogs } from '#lib/server/db/schema.js';
 
 export const POST: RequestHandler = async ({ params }) => {
 	const id = params.id;
@@ -29,7 +29,7 @@ export const POST: RequestHandler = async ({ params }) => {
 		isCacheHit: false
 	});
 
-	return json({
+	return Response.json({
 		success: true,
 		totalRenders: keyRecord.totalRenders + 1
 	});

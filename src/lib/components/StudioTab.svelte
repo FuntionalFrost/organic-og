@@ -19,7 +19,7 @@
 		ThemeType,
 		PatternOption,
 		FontOption
-	} from '$lib/types/dashboard';
+	} from '#lib/types/dashboard.js';
 
 	interface Props {
 		studioState: StudioState;

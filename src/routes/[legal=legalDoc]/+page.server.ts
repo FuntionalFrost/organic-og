@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { definePageSeo } from 'yaxa-svelte';
-import { siteConfig } from '$lib/site.config';
+import { siteConfig } from '#lib/site.config.js';
 
 type LegalType = 'privacy' | 'terms' | 'refunds' | 'impressum';
 

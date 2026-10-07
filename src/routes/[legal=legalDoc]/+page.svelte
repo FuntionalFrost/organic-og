@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Seo, LegalDocument, Button } from 'yaxa-svelte';
-	import { siteConfig } from '$lib/site.config';
+	import { siteConfig } from '#lib/site.config.js';
 	import { ArrowLeft } from '@lucide/svelte';
 
 	let { data } = $props();

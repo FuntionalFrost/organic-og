@@ -9,6 +9,8 @@ function getFontFiles(): string[] {
 	if (cachedFontFiles !== null) return cachedFontFiles;
 
 	const candidateDirs = [
+		path.resolve(process.cwd(), 'static/fonts'),
+		path.resolve(process.cwd(), '.vercel/output/static/fonts'),
 		path.resolve(process.cwd(), 'src/lib/server/assets/fonts'),
 		path.resolve(process.cwd(), 'build/server/assets/fonts'),
 		path.resolve(process.cwd(), 'assets/fonts')

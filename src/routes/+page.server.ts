@@ -1,17 +1,16 @@
 import type { PageServerLoad } from './$types';
 import { desc, eq, sql } from 'drizzle-orm';
-import { env } from '$env/dynamic/private';
+import { ORIGIN, PUBLIC_APP_URL, PUBLIC_BASE_URL, OG_SIGNING_SECRET } from '$app/env/private';
+
 import { definePageSeo, generateOrganizationSchema, generateWebSiteSchema } from 'yaxa-svelte';
-import { db } from '$lib/server/db';
-import { apiKeys, renderLogs } from '$lib/server/db/schema';
-import { createCanonicalQueryString, generateHmacSignature } from '$lib/server/og/security';
-import { siteConfig } from '$lib/site.config';
+
+import { db } from '#lib/server/db/index.js';
+import { apiKeys, renderLogs } from '#lib/server/db/schema.js';
+import { createCanonicalQueryString, generateHmacSignature } from '#lib/server/og/security.js';
+import { siteConfig } from '#lib/site.config.js';
 
 export const load: PageServerLoad = async ({ url }) => {
-	const baseUrl = (env.ORIGIN || env.PUBLIC_APP_URL || env.PUBLIC_BASE_URL || url.origin).replace(
-		/\/+$/,
-		''
-	);
+	const baseUrl = (ORIGIN || PUBLIC_APP_URL || PUBLIC_BASE_URL || url.origin).replace(/\/+$/, '');
 
 	// 1. Compute default root signed OG URL
 	const defaultOgParams = {
@@ -25,10 +24,9 @@ export const load: PageServerLoad = async ({ url }) => {
 	};
 
 	const secret =
-		env.OG_SIGNING_SECRET ||
+		OG_SIGNING_SECRET ||
 		process.env.OG_SIGNING_SECRET ||
 		(process.env.NODE_ENV !== 'production' ? 'fallback-secret-key-32-chars-min' : '');
-
 	let defaultOgUrl: string;
 	if (secret) {
 		const canonical = createCanonicalQueryString(defaultOgParams);
@@ -66,17 +64,12 @@ export const load: PageServerLoad = async ({ url }) => {
 	const [activeKeysCount] = await db.select({ count: sql<number>`count(*)` }).from(apiKeys);
 
 	const [totalLogsCount] = await db.select({ count: sql<number>`count(*)` }).from(renderLogs);
-
 	const [cacheHitsCount] = await db
 		.select({ count: sql<number>`count(*)` })
 		.from(renderLogs)
 		.where(eq(renderLogs.isCacheHit, true));
-
 	const templateBreakdown = await db
-		.select({
-			template: renderLogs.template,
-			count: sql<number>`count(*)`
-		})
+		.select({ template: renderLogs.template, count: sql<number>`count(*)` })
 		.from(renderLogs)
 		.groupBy(renderLogs.template);
 

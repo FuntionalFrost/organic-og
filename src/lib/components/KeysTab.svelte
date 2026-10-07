@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { DataTable, Button, Badge, Card, MetricCard } from 'yaxa-svelte';
-	import type { ApiKeyItem } from '$lib/types/dashboard';
+	import type { ApiKeyItem } from '#lib/types/dashboard.js';
 
 	interface Props {
 		keysList: ApiKeyItem[];

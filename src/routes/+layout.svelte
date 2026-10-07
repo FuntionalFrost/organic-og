@@ -8,8 +8,8 @@
 		generateOrganizationSchema,
 		generateWebSiteSchema
 	} from 'yaxa-svelte';
-	import { siteConfig } from '$lib/site.config';
-	import AppFooter from '$lib/components/AppFooter.svelte';
+	import { siteConfig } from '#lib/site.config.js';
+	import AppFooter from '#lib/components/AppFooter.svelte';
 
 	let { children } = $props();
 

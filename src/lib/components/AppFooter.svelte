@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { siteConfig } from '$lib/site.config';
+	import { siteConfig } from '#lib/site.config.js';
 	import { Icon } from 'yaxa-svelte';
-	import OrganicOgLogo from '$lib/components/OrganicOgLogo.svelte';
+	import OrganicOgLogo from '#lib/components/OrganicOgLogo.svelte';
 
 	const currentYear = new Date().getFullYear();
 	const legalLinks = siteConfig.legal?.links;

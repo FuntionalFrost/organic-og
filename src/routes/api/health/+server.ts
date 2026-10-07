@@ -1,6 +1,6 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
-import { db } from '$lib/server/db';
+import { db } from '#lib/server/db/index.js';
 
 export const GET: RequestHandler = async () => {
 	const start = Date.now();
@@ -14,7 +14,7 @@ export const GET: RequestHandler = async () => {
 
 	const latencyMs = Date.now() - start;
 
-	return json({
+	return Response.json({
 		status: dbStatus === 'connected' ? 'healthy' : 'degraded',
 		database: dbStatus,
 		latencyMs,

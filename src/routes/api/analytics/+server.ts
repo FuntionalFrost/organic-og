@@ -1,7 +1,7 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { desc, eq, sql } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { apiKeys, renderLogs } from '$lib/server/db/schema';
+import { db } from '#lib/server/db/index.js';
+import { apiKeys, renderLogs } from '#lib/server/db/schema.js';
 
 export const GET: RequestHandler = async () => {
 	const [activeKeysCount] = await db.select({ count: sql<number>`count(*)` }).from(apiKeys);
@@ -39,7 +39,7 @@ export const GET: RequestHandler = async () => {
 	const cacheHits = cacheHitsCount?.count || 0;
 	const cacheHitRate = totalRenders > 0 ? Math.round((cacheHits / totalRenders) * 100) : 0;
 
-	return json({
+	return Response.json({
 		metrics: {
 			totalRenders,
 			cacheHits,

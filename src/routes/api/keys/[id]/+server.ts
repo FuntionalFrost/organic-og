@@ -1,7 +1,7 @@
-import { json, error, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { apiKeys, renderLogs } from '$lib/server/db/schema';
+import { db } from '#lib/server/db/index.js';
+import { apiKeys, renderLogs } from '#lib/server/db/schema.js';
 
 export const DELETE: RequestHandler = async ({ params }) => {
 	const id = params.id;
@@ -13,5 +13,5 @@ export const DELETE: RequestHandler = async ({ params }) => {
 	await db.delete(renderLogs).where(eq(renderLogs.apiKeyId, id));
 	await db.delete(apiKeys).where(eq(apiKeys.id, id));
 
-	return json({ success: true });
+	return Response.json({ success: true });
 };

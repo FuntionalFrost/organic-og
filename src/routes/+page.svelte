@@ -32,14 +32,14 @@
 		Scale,
 		ShoppingBag
 	} from '@lucide/svelte';
-	import type { StudioState } from '$lib/types/dashboard';
-	import { getActiveParams } from '$lib/utils/snippets';
-	import StudioTab from '$lib/components/StudioTab.svelte';
-	import KeysTab from '$lib/components/KeysTab.svelte';
-	import AnalyticsTab from '$lib/components/AnalyticsTab.svelte';
-	import DocsTab from '$lib/components/DocsTab.svelte';
-	import CreateKeyModal from '$lib/components/CreateKeyModal.svelte';
-	import OrganicOgLogo from '$lib/components/OrganicOgLogo.svelte';
+	import type { StudioState } from '#lib/types/dashboard.js';
+	import { getActiveParams } from '#lib/utils/snippets.js';
+	import StudioTab from '#lib/components/StudioTab.svelte';
+	import KeysTab from '#lib/components/KeysTab.svelte';
+	import AnalyticsTab from '#lib/components/AnalyticsTab.svelte';
+	import DocsTab from '#lib/components/DocsTab.svelte';
+	import CreateKeyModal from '#lib/components/CreateKeyModal.svelte';
+	import OrganicOgLogo from '#lib/components/OrganicOgLogo.svelte';
 
 	let { data } = $props();
 

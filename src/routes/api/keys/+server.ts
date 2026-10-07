@@ -1,10 +1,10 @@
-import { json, error, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { desc } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
-import { db } from '$lib/server/db';
-import { apiKeys } from '$lib/server/db/schema';
-import { sha256 } from '$lib/server/og/security';
+import { db } from '#lib/server/db/index.js';
+import { apiKeys } from '#lib/server/db/schema.js';
+import { sha256 } from '#lib/server/og/security.js';
 
 const bodySchema = z.object({
 	name: z.string().min(2).max(50)
@@ -32,7 +32,7 @@ export const GET: RequestHandler = async () => {
 		.from(apiKeys)
 		.orderBy(desc(apiKeys.createdAt));
 
-	return json(keys);
+	return Response.json(keys);
 };
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -60,7 +60,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		await db.insert(apiKeys).values(newKey);
 
 		// 3. Return raw key once to client
-		return json({
+		return Response.json({
 			...newKey,
 			rawKey: rawToken
 		});

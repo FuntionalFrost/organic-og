@@ -23,7 +23,7 @@
 	);
 </script>
 
-<main class="mx-auto w-full max-w-7xl flex-1 space-y-8 p-8">
+<main class="mx-auto w-full max-w-7xl flex-1 space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8">
 	<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
 		<div>
 			<h1 class="text-xl font-bold text-neutral-900 dark:text-white">Analytics & Health Deck</h1>
@@ -111,7 +111,7 @@
 
 	<!-- Template Breakdown Grid -->
 	<Card
-		class="space-y-4 border border-neutral-200 bg-white p-6 yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
+		class="space-y-4 border border-neutral-200 bg-white p-4 yaxa-surface-elevated sm:p-6 dark:border-neutral-800/90 dark:bg-[#121215]"
 	>
 		<div class="flex items-center justify-between">
 			<h3
@@ -182,7 +182,7 @@
 			Recent Render Activity (Last 15)
 		</h3>
 		<Card
-			class="overflow-hidden border border-neutral-200 bg-white p-0 yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
+			class="overflow-x-auto border border-neutral-200 bg-white p-0 yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
 		>
 			<DataTable
 				data={analyticsData?.recentLogs || []}

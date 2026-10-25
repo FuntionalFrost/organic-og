@@ -216,12 +216,14 @@
 	}
 </script>
 
-<main class="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8 lg:grid-cols-12">
+<main
+	class="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-6 p-4 sm:gap-8 sm:p-6 lg:grid-cols-12 lg:p-8"
+>
 	<!-- Controls Column -->
 	<Card
-		class="h-fit space-y-4 border border-neutral-200 bg-white p-6 yaxa-surface-elevated lg:col-span-5 dark:border-neutral-800/90 dark:bg-[#121215]"
+		class="h-fit space-y-4 border border-neutral-200 bg-white p-4 yaxa-surface-elevated sm:p-6 lg:col-span-5 dark:border-neutral-800/90 dark:bg-[#121215]"
 	>
-		<div class="flex items-center justify-between">
+		<div class="flex items-center justify-between gap-2">
 			<h2
 				class="text-xs font-semibold tracking-wider text-neutral-600 uppercase dark:text-neutral-400"
 			>
@@ -229,7 +231,11 @@
 			</h2>
 			{#if signatureToken}
 				<Tooltip text="HMAC-SHA256 Cryptographic URL Signature">
-					<Badge color="success" variant="subtle" class="font-mono text-[10px]">
+					<Badge
+						color="success"
+						variant="subtle"
+						class="max-w-32.5 shrink-0 truncate font-mono text-[10px]"
+					>
 						HMAC: {signatureToken}
 					</Badge>
 				</Tooltip>
@@ -271,8 +277,8 @@
 			/>
 		</FormField>
 
-		<!-- Theme & Format (2 Columns: Spacious, Zero Clipping) -->
-		<div class="grid grid-cols-2 gap-3">
+		<!-- Theme & Format (Responsive 1/2 Columns) -->
+		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 			<FormField label="Theme Palette">
 				<Select bind:value={studioState.theme} options={themeOptions} size="sm" class="w-full" />
 			</FormField>
@@ -289,8 +295,8 @@
 			</FormField>
 		</div>
 
-		<!-- Typography & Pattern (2 Columns: Spacious, Zero Clipping) -->
-		<div class="grid grid-cols-2 gap-3">
+		<!-- Typography & Pattern (Responsive 1/2 Columns) -->
+		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 			<FormField label="Typography">
 				<Select bind:value={studioState.font} options={fontOptions} size="sm" class="w-full" />
 			</FormField>
@@ -316,7 +322,7 @@
 			</button>
 
 			{#if showCustomColors}
-				<div class="mt-3 grid grid-cols-3 gap-2">
+				<div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
 					<FormField label="Background">
 						<Input bind:value={studioState.bg} placeholder="#09090b" class="font-mono text-xs" />
 					</FormField>
@@ -379,7 +385,11 @@
 
 		<!-- Site Name & Badge (SaaS, Blog, Ecommerce, GitHub, Event, Changelog) -->
 		{#if studioState.template !== 'minimal' && studioState.template !== 'quote'}
-			<div class="grid gap-4 {studioState.template === 'github' ? 'grid-cols-1' : 'grid-cols-2'}">
+			<div
+				class="grid gap-3 sm:gap-4 {studioState.template === 'github'
+					? 'grid-cols-1'
+					: 'grid-cols-1 sm:grid-cols-2'}"
+			>
 				<FormField
 					label={studioState.template === 'github'
 						? 'Repository Owner'
@@ -427,7 +437,9 @@
 
 		<!-- E-Commerce Inputs -->
 		{#if studioState.template === 'ecommerce'}
-			<div class="grid grid-cols-2 gap-4 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+			<div
+				class="grid grid-cols-1 gap-3 border-t border-neutral-200 pt-2 sm:grid-cols-2 sm:gap-4 dark:border-neutral-800"
+			>
 				<FormField label="Price Tag">
 					<Input bind:value={studioState.price} placeholder="€99.00" />
 				</FormField>
@@ -439,7 +451,9 @@
 
 		<!-- GitHub Inputs -->
 		{#if studioState.template === 'github'}
-			<div class="grid grid-cols-3 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+			<div
+				class="grid grid-cols-1 gap-3 border-t border-neutral-200 pt-2 sm:grid-cols-3 dark:border-neutral-800"
+			>
 				<FormField label="Stars Count">
 					<Input bind:value={studioState.stars} placeholder="12.4k" />
 				</FormField>
@@ -454,7 +468,9 @@
 
 		<!-- Podcast Inputs -->
 		{#if studioState.template === 'podcast'}
-			<div class="grid grid-cols-3 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+			<div
+				class="grid grid-cols-1 gap-3 border-t border-neutral-200 pt-2 sm:grid-cols-3 dark:border-neutral-800"
+			>
 				<FormField label="Host Name">
 					<Input bind:value={studioState.host} placeholder="Rich Harris" />
 				</FormField>
@@ -469,7 +485,9 @@
 
 		<!-- Event Inputs -->
 		{#if studioState.template === 'event'}
-			<div class="grid grid-cols-2 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+			<div
+				class="grid grid-cols-1 gap-3 border-t border-neutral-200 pt-2 sm:grid-cols-2 dark:border-neutral-800"
+			>
 				<FormField label="Location / Venue">
 					<Input bind:value={studioState.location} placeholder="San Francisco & Virtual" />
 				</FormField>
@@ -481,7 +499,9 @@
 
 		<!-- Quote Inputs -->
 		{#if studioState.template === 'quote'}
-			<div class="grid grid-cols-3 gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+			<div
+				class="grid grid-cols-1 gap-3 border-t border-neutral-200 pt-2 sm:grid-cols-3 dark:border-neutral-800"
+			>
 				<FormField label="Author Name">
 					<Input bind:value={studioState.author} placeholder="Guillermo Rauch" />
 				</FormField>
@@ -547,12 +567,12 @@
 			</div>
 			<!-- Mode Switcher Buttons -->
 			<div
-				class="flex items-center gap-1 rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900"
+				class="no-scrollbar flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900"
 			>
 				{#each previewModes as m (m.value)}
 					<button
 						type="button"
-						class="flex yaxa-press cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {previewMode ===
+						class="flex shrink-0 yaxa-press cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {previewMode ===
 						m.value
 							? 'bg-white text-neutral-900 shadow-xs dark:bg-neutral-800 dark:text-white'
 							: 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'}"
@@ -595,7 +615,7 @@
 			<!-- 1. Raw Canvas Mode -->
 			{#if previewMode === 'canvas'}
 				<div
-					class="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-neutral-900"
+					class="relative aspect-1200/630 w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-neutral-900"
 				>
 					{#if signedPreviewUrl}
 						<img
@@ -613,7 +633,7 @@
 				<div
 					class="w-full max-w-xl space-y-0 overflow-hidden rounded-2xl border border-neutral-800 bg-black shadow-2xl"
 				>
-					<div class="relative aspect-[1200/630] w-full overflow-hidden bg-neutral-900">
+					<div class="relative aspect-1200/630 w-full overflow-hidden bg-neutral-900">
 						{#if signedPreviewUrl}
 							<img
 								src={signedPreviewUrl}
@@ -650,7 +670,7 @@
 						{studioState.description}
 					</div>
 					<div
-						class="mt-2 aspect-[1200/630] w-full overflow-hidden rounded-md border border-neutral-800 bg-neutral-900"
+						class="mt-2 aspect-1200/630 w-full overflow-hidden rounded-md border border-neutral-800 bg-neutral-900"
 					>
 						{#if signedPreviewUrl}
 							<img
@@ -678,7 +698,7 @@
 							<div class="text-[10px] text-neutral-400">Promoted • Just now</div>
 						</div>
 					</div>
-					<div class="aspect-[1200/630] w-full overflow-hidden bg-neutral-950">
+					<div class="aspect-1200/630 w-full overflow-hidden bg-neutral-950">
 						{#if signedPreviewUrl}
 							<img
 								src={signedPreviewUrl}
@@ -704,14 +724,14 @@
 				>
 					<!-- Outgoing Message Bubble -->
 					<div
-						class="ml-auto w-full max-w-[340px] rounded-2xl rounded-tr-xs bg-[#d9fdd3] p-1.5 text-neutral-900 shadow-md sm:max-w-[360px] dark:bg-[#005c4b] dark:text-white"
+						class="ml-auto w-full max-w-85 rounded-2xl rounded-tr-xs bg-[#d9fdd3] p-1.5 text-neutral-900 shadow-md sm:max-w-90 dark:bg-[#005c4b] dark:text-white"
 					>
 						<!-- Link Preview Container -->
 						<div
 							class="overflow-hidden rounded-xl border border-neutral-300/80 bg-[#f0f2f5] dark:border-[#202c33] dark:bg-[#111b21]"
 						>
 							<div
-								class="relative aspect-[1200/630] w-full overflow-hidden bg-neutral-200 dark:bg-[#202c33]"
+								class="relative aspect-1200/630 w-full overflow-hidden bg-neutral-200 dark:bg-[#202c33]"
 							>
 								{#if signedPreviewUrl}
 									<img
@@ -741,7 +761,7 @@
 						<!-- Link Message & Timestamp Bar -->
 						<div class="flex items-end justify-between px-2 pt-2 pb-1 text-xs">
 							<span
-								class="max-w-[210px] truncate text-[12px] text-emerald-800 underline dark:text-emerald-200"
+								class="max-w-52.5 truncate text-[12px] text-emerald-800 underline dark:text-emerald-200"
 							>
 								https://{studioState.siteName || 'organic-og.vercel.app'}
 							</span>
@@ -776,13 +796,13 @@
 		<Card
 			class="space-y-3 border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800/90 dark:bg-[#121215]"
 		>
-			<div class="flex items-center justify-between">
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<span
 					class="font-mono text-xs font-semibold text-neutral-600 uppercase dark:text-neutral-400"
 				>
 					Signed Embed Code ({studioState.format === 'svg' ? 'SVG Vector' : 'PNG Social'})
 				</span>
-				<div class="flex items-center gap-2">
+				<div class="flex flex-wrap items-center gap-2">
 					<Button color="neutral" variant="soft" size="xs" onclick={copyImageUrl}>Copy URL</Button>
 					<Button color="neutral" variant="soft" size="xs" onclick={copyMarkdownTag}
 						>Markdown</Button

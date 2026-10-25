@@ -624,10 +624,17 @@
 		class="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200/80 yaxa-glass px-4 transition-colors sm:px-6 dark:border-neutral-800/80"
 	>
 		<!-- Left: Brand Logo & Navigation Segment -->
-		<div class="flex items-center gap-3 sm:gap-5">
-			<OrganicOgLogo size="sm" />
+		<div class="flex items-center gap-2 sm:gap-4">
+			<OrganicOgLogo size="sm" hideTextOnMobile={true} />
 			<div class="w-auto">
-				<Tabs items={tabItems} bind:value={activeTab} variant="segmented" />
+				<Tabs
+					items={tabItems}
+					bind:value={activeTab}
+					variant="segmented"
+					ui={{
+						tab: 'px-2 py-1 text-xs max-sm:[&>span]:hidden sm:px-3 sm:py-1.5 sm:text-sm'
+					}}
+				/>
 			</div>
 		</div>
 

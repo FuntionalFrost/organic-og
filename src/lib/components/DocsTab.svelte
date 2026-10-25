@@ -179,7 +179,7 @@
 	];
 </script>
 
-<main class="mx-auto w-full max-w-7xl flex-1 space-y-12 p-8">
+<main class="mx-auto w-full max-w-7xl flex-1 space-y-8 p-4 sm:space-y-12 sm:p-6 lg:p-8">
 	<div>
 		<h1 class="text-xl font-bold text-neutral-900 dark:text-white">Developer Integration Hub</h1>
 		<p class="text-sm text-neutral-600 dark:text-neutral-400">
@@ -195,56 +195,58 @@
 			>
 				Live SDK Snippets (Synced with Studio)
 			</h2>
-			<ButtonGroup>
-				<Button
-					variant={docLanguage === 'curl' ? 'solid' : 'outline'}
-					color="primary"
-					size="xs"
-					onclick={() => (docLanguage = 'curl')}
-				>
-					cURL
-				</Button>
-				<Button
-					variant={docLanguage === 'typescript' ? 'solid' : 'outline'}
-					color="primary"
-					size="xs"
-					onclick={() => (docLanguage = 'typescript')}
-				>
-					TypeScript
-				</Button>
-				<Button
-					variant={docLanguage === 'nextjs' ? 'solid' : 'outline'}
-					color="primary"
-					size="xs"
-					onclick={() => (docLanguage = 'nextjs')}
-				>
-					Next.js
-				</Button>
-				<Button
-					variant={docLanguage === 'python' ? 'solid' : 'outline'}
-					color="primary"
-					size="xs"
-					onclick={() => (docLanguage = 'python')}
-				>
-					Python
-				</Button>
-				<Button
-					variant={docLanguage === 'svelte' ? 'solid' : 'outline'}
-					color="primary"
-					size="xs"
-					onclick={() => (docLanguage = 'svelte')}
-				>
-					SvelteKit / HTML
-				</Button>
-				<Button
-					variant={docLanguage === 'markdown' ? 'solid' : 'outline'}
-					color="primary"
-					size="xs"
-					onclick={() => (docLanguage = 'markdown')}
-				>
-					Markdown (README)
-				</Button>
-			</ButtonGroup>
+			<div class="no-scrollbar max-w-full overflow-x-auto pb-1">
+				<ButtonGroup>
+					<Button
+						variant={docLanguage === 'curl' ? 'solid' : 'outline'}
+						color="primary"
+						size="xs"
+						onclick={() => (docLanguage = 'curl')}
+					>
+						cURL
+					</Button>
+					<Button
+						variant={docLanguage === 'typescript' ? 'solid' : 'outline'}
+						color="primary"
+						size="xs"
+						onclick={() => (docLanguage = 'typescript')}
+					>
+						TypeScript
+					</Button>
+					<Button
+						variant={docLanguage === 'nextjs' ? 'solid' : 'outline'}
+						color="primary"
+						size="xs"
+						onclick={() => (docLanguage = 'nextjs')}
+					>
+						Next.js
+					</Button>
+					<Button
+						variant={docLanguage === 'python' ? 'solid' : 'outline'}
+						color="primary"
+						size="xs"
+						onclick={() => (docLanguage = 'python')}
+					>
+						Python
+					</Button>
+					<Button
+						variant={docLanguage === 'svelte' ? 'solid' : 'outline'}
+						color="primary"
+						size="xs"
+						onclick={() => (docLanguage = 'svelte')}
+					>
+						SvelteKit / HTML
+					</Button>
+					<Button
+						variant={docLanguage === 'markdown' ? 'solid' : 'outline'}
+						color="primary"
+						size="xs"
+						onclick={() => (docLanguage = 'markdown')}
+					>
+						Markdown (README)
+					</Button>
+				</ButtonGroup>
+			</div>
 		</div>
 
 		<div

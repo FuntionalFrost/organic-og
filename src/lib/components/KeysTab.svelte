@@ -21,7 +21,7 @@
 	];
 </script>
 
-<main class="mx-auto w-full max-w-7xl flex-1 space-y-6 p-8">
+<main class="mx-auto w-full max-w-7xl flex-1 space-y-6 p-4 sm:p-6 lg:p-8">
 	<div>
 		<h1 class="text-xl font-bold text-neutral-900 dark:text-white">API Tokens & Telemetry</h1>
 		<p class="text-sm text-neutral-600 dark:text-neutral-400">
@@ -62,7 +62,7 @@
 	</div>
 
 	<Card
-		class="overflow-hidden border border-neutral-200 bg-white yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
+		class="overflow-x-auto border border-neutral-200 bg-white yaxa-surface-elevated dark:border-neutral-800/90 dark:bg-[#121215]"
 	>
 		<DataTable
 			data={keysList}

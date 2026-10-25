@@ -59,7 +59,7 @@
 		"@resvg/resvg-js": "^2.6.2",
 		"@upstash/redis": "^1.39.0",
 		"nanoid": "^6.0.1",
-		"yaxa-svelte": "^1.15.0",
+		"yaxa-svelte": "^2.0.0",
 		"zod": "^4.6.5"
 	},
 	"imports": {

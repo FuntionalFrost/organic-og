@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, DataTable, Badge, Progress, MetricCard } from 'yaxa-svelte';
+	import { Card, DataTable, Badge, Progress, MetricCard, DonutChart } from 'yaxa-svelte';
 	import type { AnalyticsData } from '#lib/types/dashboard.js';
 
 	interface Props {
@@ -14,14 +14,29 @@
 		{ key: 'template', label: 'Template' },
 		{ key: 'isCacheHit', label: 'Cache Status', class: 'text-right' }
 	];
+
+	const donutData = $derived(
+		(analyticsData?.templateBreakdown || []).map((t) => ({
+			label: t.template.toUpperCase(),
+			value: t.count
+		}))
+	);
 </script>
 
 <main class="mx-auto w-full max-w-7xl flex-1 space-y-8 p-8">
-	<div>
-		<h1 class="text-xl font-bold text-neutral-900 dark:text-white">Analytics & Health Deck</h1>
-		<p class="text-sm text-neutral-600 dark:text-neutral-400">
-			Real-time render throughput, cache efficiency, and API usage logs.
-		</p>
+	<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+		<div>
+			<h1 class="text-xl font-bold text-neutral-900 dark:text-white">Analytics & Health Deck</h1>
+			<p class="text-sm text-neutral-600 dark:text-neutral-400">
+				Real-time render throughput, cache efficiency, and API usage logs.
+			</p>
+		</div>
+		<div
+			class="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-50/50 px-3 py-1 text-xs font-medium text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-950/30 dark:text-emerald-300"
+		>
+			<span class="inline-flex h-2 w-2 animate-pulse rounded-full bg-emerald-500"></span>
+			<span class="font-mono text-xs">All systems operational</span>
+		</div>
 	</div>
 
 	<!-- KPI Summary Cards with Native yaxa-svelte Sparklines -->
@@ -109,37 +124,54 @@
 			</Badge>
 		</div>
 
-		<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-			{#each analyticsData?.templateBreakdown || [] as item (item.template)}
-				<Card
-					variant="subtle"
-					class="flex flex-col justify-between border border-neutral-200 bg-neutral-50 p-4 shadow-2xs dark:border-neutral-800/80 dark:bg-[#0c0c0e]"
-				>
-					<div class="flex items-center justify-between">
-						<span
-							class="font-mono text-xs font-semibold text-neutral-600 uppercase dark:text-neutral-400"
-						>
-							{item.template}
-						</span>
-					</div>
-					<div class="mt-2 text-2xl font-bold text-neutral-900 dark:text-white">
-						{item.count}
-					</div>
-					<Progress
-						value={item.count}
-						max={analyticsData?.metrics.totalRenders || 1}
-						color="primary"
-						size="xs"
-						class="mt-2"
+		{#if donutData.length > 0}
+			<div class="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+				<!-- Proportional Donut Chart -->
+				<div class="flex flex-col items-center justify-center lg:col-span-4">
+					<DonutChart
+						data={donutData}
+						size={220}
+						strokeWidth={24}
+						centerLabel="Total Renders"
+						centerValue={analyticsData?.metrics.totalRenders ?? 0}
+						showLegend={false}
+						showTooltip={true}
 					/>
-				</Card>
-			{/each}
-			{#if !analyticsData?.templateBreakdown?.length}
-				<div class="col-span-full py-4 text-center text-sm text-neutral-500">
-					No template renders logged yet.
 				</div>
-			{/if}
-		</div>
+
+				<!-- Grid of Individual Template Cards -->
+				<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:col-span-8">
+					{#each analyticsData?.templateBreakdown || [] as item (item.template)}
+						<Card
+							variant="subtle"
+							class="flex flex-col justify-between border border-neutral-200 bg-neutral-50 p-4 shadow-2xs dark:border-neutral-800/80 dark:bg-[#0c0c0e]"
+						>
+							<div class="flex items-center justify-between">
+								<span
+									class="font-mono text-xs font-semibold text-neutral-600 uppercase dark:text-neutral-400"
+								>
+									{item.template}
+								</span>
+							</div>
+							<div class="mt-2 text-2xl font-bold text-neutral-900 dark:text-white">
+								{item.count}
+							</div>
+							<Progress
+								value={item.count}
+								max={analyticsData?.metrics.totalRenders || 1}
+								color="primary"
+								size="xs"
+								class="mt-2"
+							/>
+						</Card>
+					{/each}
+				</div>
+			</div>
+		{:else}
+			<div class="col-span-full py-6 text-center text-sm text-neutral-500">
+				No template renders logged yet.
+			</div>
+		{/if}
 	</Card>
 
 	<!-- Live Audit / Render Logs Table -->

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Modal, Button, Input, FormField, useClipboard, toast } from 'yaxa-svelte';
+	import { Modal, Button, Input, FormField, Alert, useClipboard, toast } from 'yaxa-svelte';
 	import type { ApiKeyItem } from '#lib/types/dashboard.js';
 
 	interface Props {
@@ -80,13 +80,11 @@
 		</form>
 	{:else}
 		<div class="space-y-4">
-			<div
-				class="flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3"
-			>
-				<p class="text-xs text-amber-200">
-					⚠️ Copy this secret key now. You will not be able to see it again.
-				</p>
-			</div>
+			<Alert
+				color="warning"
+				title="Keep this secret key secure"
+				description="Copy this secret key now. You will not be able to see or retrieve it again."
+			/>
 			<div class="flex items-center gap-2">
 				<Input value={generatedRawKey} readonly class="font-mono text-xs" />
 				<Button type="button" color="primary" variant="solid" onclick={copyKey}>Copy</Button>

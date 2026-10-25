@@ -18,6 +18,20 @@
 				<p class="max-w-sm text-sm text-neutral-600 dark:text-neutral-400">
 					{siteConfig.description}
 				</p>
+				<p class="text-xs text-neutral-400 dark:text-neutral-500">
+					© {currentYear}
+					{siteConfig.name}
+					{#if siteConfig.project?.licenseUrl}
+						· <a
+							href={siteConfig.project.licenseUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="underline-offset-2 transition-colors hover:text-neutral-700 hover:underline dark:hover:text-neutral-300"
+						>
+							MIT Licensed
+						</a>
+					{/if}
+				</p>
 			</div>
 
 			<!-- Quick Links -->
@@ -92,46 +106,36 @@
 				</div>
 			{/if}
 
-			<!-- Community / Socials -->
+			<!-- Community / Ecosystem -->
 			<div>
 				<h3 class="text-xs font-semibold tracking-wider text-neutral-900 uppercase dark:text-white">
 					Community
 				</h3>
-				<div class="mt-4 flex items-center gap-3 text-neutral-500 dark:text-neutral-400">
+				<ul class="mt-4 space-y-2.5 text-sm text-neutral-600 dark:text-neutral-400">
 					{#if siteConfig.socials?.github}
+						<li>
+							<a
+								href={siteConfig.socials.github}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-1.5 transition-colors hover:text-primary-600 dark:hover:text-primary-400"
+							>
+								<Icon name="github" size="xs" />
+								<span>GitHub ↗</span>
+							</a>
+						</li>
+					{/if}
+					<li>
 						<a
-							href={siteConfig.socials.github}
+							href="https://yaxa.vercel.app/"
 							target="_blank"
 							rel="noopener noreferrer"
-							class="transition-colors hover:text-neutral-900 dark:hover:text-white"
-							aria-label="GitHub"
+							class="inline-flex items-center gap-1.5 transition-colors hover:text-primary-600 dark:hover:text-primary-400"
 						>
-							<Icon name="github" size="sm" />
+							<span>Built with Yaxa ↗</span>
 						</a>
-					{/if}
-					{#if siteConfig.socials?.twitter}
-						<a
-							href={siteConfig.socials.twitter}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="transition-colors hover:text-neutral-900 dark:hover:text-white"
-							aria-label="Twitter"
-						>
-							<Icon name="twitter" size="sm" />
-						</a>
-					{/if}
-				</div>
-			</div>
-		</div>
-
-		<!-- Footer Bottom Bar (Clean single copyright, no duplicated links) -->
-		<div
-			class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-neutral-200 pt-8 text-xs text-neutral-500 sm:flex-row dark:border-neutral-800 dark:text-neutral-400"
-		>
-			<p>© {currentYear} {siteConfig.name}. All rights reserved.</p>
-			<div class="flex items-center gap-2">
-				<span class="inline-flex h-2 w-2 animate-pulse rounded-full bg-emerald-500"></span>
-				<span class="font-mono text-[11px] text-neutral-400">All systems operational</span>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>

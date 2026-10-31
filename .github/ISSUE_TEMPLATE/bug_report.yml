@@ -1,0 +1,113 @@
+name: Bug Report
+description: Report an issue or bug with Organic-OG
+title: '[Bug]: '
+labels: ['bug']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue! Please provide as much detail as possible so we can reproduce and fix it quickly.
+        *For security vulnerabilities (HMAC bypass, SSRF, token leakage), please email `devfrost@protonmail.com` directly instead of filing a public issue.*
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component or Template
+      description: Select which area of Organic-OG is encountering the bug.
+      options:
+        - Studio UI (Frontend)
+        - /api/og (Image Generation Engine)
+        - /api/sign (HMAC Signing Endpoint)
+        - /api/keys (API Key Management)
+        - SaaS Template
+        - Blog Template
+        - Minimal Template
+        - E-Commerce Template
+        - GitHub Template
+        - Podcast Template
+        - Event Template
+        - Quote Template
+        - Changelog Template
+        - Telemetry & Analytics
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: Output Format
+      description: If this issue affects rendering, which format was requested?
+      options:
+        - PNG (Binary raster)
+        - SVG (Vector stream)
+        - Both
+        - Not Applicable (UI/Other bug)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what the bug is.
+      placeholder: 'e.g. When requesting the podcast template with a long title, text overflows the card frame...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: What steps are needed to reproduce the issue?
+      placeholder: |
+        1. Go to Studio tab or call /api/og
+        2. Set parameters: template=podcast&title=...
+        3. See error or visual glitch
+    validations:
+      required: true
+
+  - type: input
+    id: sample-url
+    attributes:
+      label: Sample Query String or URL (if applicable)
+      description: The exact URL or query parameters that cause the bug.
+      placeholder: '/api/og?template=podcast&title=Test&theme=dark'
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: 'Text should wrap gracefully within 1200x630 boundaries without clipping...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs or Screenshots
+      description: If applicable, add browser console logs, terminal output, or screenshots.
+      render: shell
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Browser, Node / pnpm version, or deployment runtime (e.g. Vercel, Node Docker, Local).
+      placeholder: 'Windows 11 / Chrome 132 / Node 24 / Vercel Serverless'
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have searched the existing issues and confirmed this is not a duplicate.
+          required: true
+        - label: This is not a sensitive security vulnerability (security issues should be reported to devfrost@protonmail.com).
+          required: true

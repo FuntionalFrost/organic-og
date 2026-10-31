@@ -48,6 +48,7 @@
 | **Database**        | SQLite / Turso LibSQL + Drizzle ORM              |
 | **Auth & Security** | Token-based API Keys + HMAC-SHA256 Signing       |
 | **Caching**         | Hybrid Dual-Tier (LRU in-memory + Upstash Redis) |
+| **Testing**         | Vitest (Zero-Browser Unit & Integration)         |
 
 ---
 
@@ -145,6 +146,9 @@ function signOgUrl(params: Record<string, string>, secret: string): string {
 Validate the entire project with strict type checks and linting:
 
 ```bash
+# Run Test Suite (Vitest)
+pnpm test
+
 # Type Check
 pnpm run check
 
@@ -157,6 +161,13 @@ pnpm run lint
 # Production Build
 pnpm run build
 ```
+
+---
+
+## 🤝 Contributing & Security
+
+- **Contributing**: Please read our [Contributing Guide](CONTRIBUTING.md) for details on development setup, Svelte 5 runes conventions, and pull request workflows.
+- **Security**: For responsible disclosure of security vulnerabilities, see our [Security Policy](SECURITY.md) or email `devfrost@protonmail.com`.
 
 ---
 

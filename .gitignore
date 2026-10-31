@@ -29,7 +29,7 @@ pnpm-debug.log*
 
 # Playwright & Testing
 test-results
-playwright-report
+coverage
 
 # SQLite
 *.db

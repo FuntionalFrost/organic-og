@@ -74,7 +74,7 @@
 			font: 'inter',
 			title: 'Organic-OG: Zero-WASM OpenGraph Engine',
 			description: 'Next-gen dynamic visual cards generated at the edge in <10ms.',
-			siteName: 'organic-og.io',
+			siteName: 'organic-og.vercel.app',
 			badge: 'v2.0 RELEASE'
 		},
 		{

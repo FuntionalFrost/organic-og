@@ -304,7 +304,7 @@
 					Prevents URL parameter tampering without leaking private keys.
 				</p>
 				<CodeBlock
-					code={`GET ${baseUrl || 'https://organic-og.io'}/api/og?title=Edge&s=4f8b92a1c0d3e5f7`}
+					code={`GET ${baseUrl || 'https://organic-og.vercel.app'}/api/og?title=Edge&s=4f8b92a1c0d3e5f7`}
 					language="bash"
 					themeMode="adaptive"
 				/>

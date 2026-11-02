@@ -23,6 +23,10 @@ jobs:
   build-and-check:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: file:local.db
+      OG_SIGNING_SECRET: test-signing-secret-for-ci-builds-min-32-chars
+
     steps:
       - uses: actions/checkout@v7
 

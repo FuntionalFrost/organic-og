@@ -1,5 +1,6 @@
 // server/utils/imageFetcher.ts
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']);
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB maximum image size
 
 const inMemoryImageCache = new Map<string, string>();
 
@@ -54,16 +55,21 @@ export async function fetchRemoteImageAsDataUri(url: string | undefined): Promis
 
 		if (!response.ok) return null;
 
+		const contentLength = response.headers.get('content-length');
+		if (contentLength && parseInt(contentLength, 10) > MAX_IMAGE_BYTES) {
+			return null;
+		}
+
 		const contentType = response.headers.get('content-type')?.split(';')[0]?.toLowerCase();
 		if (!contentType || !ALLOWED_MIME_TYPES.has(contentType)) return null;
 
 		const arrayBuffer = await response.arrayBuffer();
-		const bytes = new Uint8Array(arrayBuffer);
-		let binary = '';
-		for (let i = 0; i < bytes.length; i++) {
-			binary += String.fromCharCode(bytes[i]);
-		}
-		const base64 = btoa(binary);
+		if (arrayBuffer.byteLength > MAX_IMAGE_BYTES) return null;
+
+		const base64 =
+			typeof Buffer !== 'undefined'
+				? Buffer.from(arrayBuffer).toString('base64')
+				: btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 		const dataUri = `data:${contentType};base64,${base64}`;
 
 		// Store in short-lived in-memory cache (limit cache size)

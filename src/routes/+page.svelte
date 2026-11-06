@@ -611,7 +611,7 @@
 			description: 'View source code & issue tracker on GitHub',
 			icon: ExternalLink,
 			group: 'Legal & Links',
-			href: 'https://github.com/FuntionalFrost'
+			href: 'https://github.com/FuntionalFrost/organic-og'
 		}
 	];
 </script>
@@ -619,9 +619,9 @@
 <div
 	class="flex min-h-screen flex-col bg-neutral-50 text-neutral-900 transition-colors dark:bg-[#09090b] dark:text-neutral-100"
 >
-	<!-- Modern Sticky Navbar Header with Yaxa Glassmorphism -->
+	<!-- Sticky Navbar Header -->
 	<header
-		class="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200/80 yaxa-glass px-4 transition-colors sm:px-6 dark:border-neutral-800/80"
+		class="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200 bg-white px-4 transition-colors sm:px-6 dark:border-neutral-800 dark:bg-[#09090b]"
 	>
 		<!-- Left: Brand Logo & Navigation Segment -->
 		<div class="flex items-center gap-2 sm:gap-4">

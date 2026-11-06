@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Svelte 5](https://img.shields.io/badge/Svelte-5%20Runes-orange.svg)](https://svelte.dev)
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-2.x-red.svg)](https://kit.svelte.dev)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-3.x-red.svg)](https://kit.svelte.dev)
 [![Rust Resvg](https://img.shields.io/badge/Rasterizer-Resvg%20Zero--WASM-blue.svg)](https://github.com/RazrFalcon/resvg)
 
 ---
@@ -41,7 +41,7 @@
 
 | Component           | Technology                                       |
 | :------------------ | :----------------------------------------------- |
-| **Framework**       | SvelteKit 2 + Svelte 5 (Runes) + Vite 8          |
+| **Framework**       | SvelteKit 3 + Svelte 5 (Runes) + Vite 8          |
 | **UI Components**   | [`yaxa-svelte`](https://yaxa.vercel.app)         |
 | **Rasterization**   | Rust Resvg (`@resvg/resvg-js`) Zero-WASM         |
 | **Styling**         | Tailwind CSS v4                                  |

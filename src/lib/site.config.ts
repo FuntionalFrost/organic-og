@@ -43,7 +43,7 @@ export const siteConfig = defineSiteConfig({
 	seo: {
 		titleTemplate: '%s · Organic-OG',
 		defaultOgImage:
-			'/api/og?template=saas&theme=brand&title=Organic-OG&description=Instant+Dynamic+Social+Cards+%26+OpenGraph+Images&badge=v1.3+Live',
+			'/api/og?template=saas&theme=brand&title=Organic-OG&description=Instant+Dynamic+Social+Cards+%26+OpenGraph+Images&badge=v2.0+Live',
 		twitterCard: 'summary_large_image',
 		keywords: [
 			'OpenGraph generator',

@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	// 1. Compute default root signed OG URL
 	const defaultOgParams = {
-		badge: 'v1.0 Live',
+		badge: 'v2.0 Live',
 		description:
 			'High-performance OpenGraph image generator built with SvelteKit, Native SVG, and Edge Functions.',
 		siteName: 'organic-og.vercel.app',

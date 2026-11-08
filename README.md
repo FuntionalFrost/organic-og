@@ -2,6 +2,9 @@
 
 > **100% Free & Open Source Software (MIT License)**. Sub-10ms dynamic OpenGraph cards, Twitter cards, and social preview banners generated natively at the edge.
 
+🔗 **Live Demo & Interactive Studio**: [organic-og.vercel.app](https://organic-og.vercel.app)
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-organic--og.vercel.app-000000?style=flat&logo=vercel)](https://organic-og.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Svelte 5](https://img.shields.io/badge/Svelte-5%20Runes-orange.svg)](https://svelte.dev)
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-3.x-red.svg)](https://kit.svelte.dev)
@@ -53,6 +56,8 @@
 ---
 
 ## 🚀 Quick Start
+
+> 💡 **Want to test without installing?** Open the [Live Demo & Template Playground](https://organic-og.vercel.app).
 
 ### 1. Clone & Install
 

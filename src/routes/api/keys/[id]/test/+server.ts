@@ -1,6 +1,5 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
 import { db } from '#lib/server/db/index.js';
 import { apiKeys, renderLogs } from '#lib/server/db/schema.js';
 
@@ -23,7 +22,7 @@ export const POST: RequestHandler = async ({ params }) => {
 		.where(eq(apiKeys.id, id));
 
 	await db.insert(renderLogs).values({
-		id: nanoid(),
+		id: crypto.randomUUID(),
 		apiKeyId: keyRecord.id,
 		template: 'saas',
 		isCacheHit: false

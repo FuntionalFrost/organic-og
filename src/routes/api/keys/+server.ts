@@ -1,6 +1,5 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { desc } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { db } from '#lib/server/db/index.js';
 import { apiKeys } from '#lib/server/db/schema.js';
@@ -47,7 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const prefix = `${rawToken.slice(0, 12)}...${rawToken.slice(-4)}`;
 
 		const newKey = {
-			id: nanoid(),
+			id: crypto.randomUUID(),
 			name,
 			keyHash,
 			prefix,

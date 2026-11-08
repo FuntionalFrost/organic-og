@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import adapterVercel from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { yaxa } from 'yaxa-svelte/vite';
 import { defineConfig } from 'vite';
 import adapterNode from '@sveltejs/adapter-node';
 
@@ -21,6 +22,7 @@ export default defineConfig({
 			},
 
 			adapter: isNode ? adapterNode() : adapterVercel({ runtime: 'nodejs24.x' })
-		})
+		}),
+		yaxa()
 	]
 });

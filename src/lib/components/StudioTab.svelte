@@ -230,14 +230,23 @@
 				Layout & Engine Controls
 			</h2>
 			{#if signatureToken}
-				<Tooltip text="HMAC-SHA256 Cryptographic URL Signature">
-					<Badge
-						color="success"
-						variant="subtle"
-						class="max-w-32.5 shrink-0 truncate font-mono text-[10px]"
+				<Tooltip text="HMAC-SHA256 Cryptographic Signature (click to copy)">
+					<button
+						type="button"
+						onclick={() => {
+							clipboard.copy(signatureToken);
+							toast.success('HMAC signature copied to clipboard');
+						}}
+						class="inline-flex cursor-pointer"
 					>
-						HMAC: {signatureToken}
-					</Badge>
+						<Badge
+							color="success"
+							variant="subtle"
+							class="shrink-0 font-mono text-[10px] transition-opacity hover:opacity-80"
+						>
+							HMAC: {signatureToken}
+						</Badge>
+					</button>
 				</Tooltip>
 			{/if}
 		</div>

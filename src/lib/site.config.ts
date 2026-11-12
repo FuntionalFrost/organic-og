@@ -1,4 +1,4 @@
-import { defineSiteConfig } from 'yaxa-svelte';
+import { defineSiteConfig } from 'yaxa-svelte/seo';
 
 export const siteConfig = defineSiteConfig({
 	name: 'Organic-OG',

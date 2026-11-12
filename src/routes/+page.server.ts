@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { desc, eq, sql } from 'drizzle-orm';
 import { ORIGIN, PUBLIC_APP_URL, PUBLIC_BASE_URL, OG_SIGNING_SECRET } from '$app/env/private';
 
-import { definePageSeo, generateOrganizationSchema, generateWebSiteSchema } from 'yaxa-svelte';
+import { definePageSeo, generateOrganizationSchema, generateWebSiteSchema } from 'yaxa-svelte/seo';
 
 import { db } from '#lib/server/db/index.js';
 import { apiKeys, renderLogs } from '#lib/server/db/schema.js';

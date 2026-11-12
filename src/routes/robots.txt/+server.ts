@@ -1,4 +1,4 @@
-import { createRobotsHandler } from 'yaxa-svelte';
+import { createRobotsHandler } from 'yaxa-svelte/seo';
 import { siteConfig } from '#lib/site.config.js';
 
 export const GET = createRobotsHandler({

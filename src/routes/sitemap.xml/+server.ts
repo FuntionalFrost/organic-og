@@ -1,4 +1,4 @@
-import { createSitemapHandler } from 'yaxa-svelte';
+import { createSitemapHandler } from 'yaxa-svelte/seo';
 import { siteConfig } from '#lib/site.config.js';
 
 export const GET = createSitemapHandler({
